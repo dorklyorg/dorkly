@@ -1,0 +1,4 @@
+key: boolean1
+type: boolean
+description: "Human-readable description of the flag."
+serverSideOnly: false

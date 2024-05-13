@@ -1,0 +1,4 @@
+key: rollout1
+type: booleanRollout
+description: "Human-readable description of the flag."
+serverSideOnly: false

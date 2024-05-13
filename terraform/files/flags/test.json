@@ -1,0 +1,17 @@
+{
+  "env": {
+    "envId": "test",
+    "envKey": "test",
+    "envName": "Test",
+    "mobKey": "mob-dorkly-insecure-test",
+    "projName": "Dan Richelson",
+    "projKey": "default",
+    "sdkKey": {
+      "value": "sdk-dorkly-insecure-test"
+    },
+    "defaultTtl": 0,
+    "secureMode": false,
+    "version": 0
+  },
+  "dataId": "\"must be changed each time flags are updated 2\""
+}

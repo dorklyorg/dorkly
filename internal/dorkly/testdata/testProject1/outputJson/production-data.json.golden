@@ -1,0 +1,64 @@
+{
+  "segments": {},
+  "flags": {
+    "boolean1": {
+      "key": "boolean1",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSide": true,
+      "salt": "Ym9vbGVhbjE=",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 0,
+      "deleted": false
+    },
+    "rollout1": {
+      "key": "rollout1",
+      "on": true,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "rollout": {
+          "kind": "rollout",
+          "contextKind": "user",
+          "variations": [
+            {
+              "variation": 0,
+              "weight": 31000
+            },
+            {
+              "variation": 1,
+              "weight": 69000
+            }
+          ]
+        }
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSide": true,
+      "salt": "cm9sbG91dDE=",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 0,
+      "deleted": false
+    }
+  }
+}

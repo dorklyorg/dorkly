@@ -1,0 +1,6 @@
+key: myapp
+description: Human-readable description of the project.
+environments:
+  - staging # we'll reuse this key as the env name and env id
+  - production
+

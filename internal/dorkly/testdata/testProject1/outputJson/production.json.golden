@@ -1,0 +1,17 @@
+{
+  "env": {
+    "envID": "production",
+    "envKey": "production",
+    "envName": "production",
+    "mobKey": "mob-production-not-secure",
+    "projKey": "testProject1",
+    "projName": "testProject1",
+    "sdkKey": {
+      "value": "sdk-production-not-secure"
+    },
+    "defaultTtl": 0,
+    "secureMode": false,
+    "version": 0
+  },
+  "dataId": ""
+}

@@ -1,0 +1,30 @@
+name: Package flags and upload to S3
+
+on:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: dorkly
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ vars.AWS_REGION }}
+
+    - name: Run package.sh
+      run: bash package.sh flags flags.tar.gz
+
+    - name: Upload to S3
+      run: aws s3 cp flags.tar.gz s3://dorkly/

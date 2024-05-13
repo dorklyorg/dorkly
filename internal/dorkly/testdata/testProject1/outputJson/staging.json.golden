@@ -1,0 +1,17 @@
+{
+  "env": {
+    "envID": "staging",
+    "envKey": "staging",
+    "envName": "staging",
+    "mobKey": "mob-staging-not-secure",
+    "projKey": "testProject1",
+    "projName": "testProject1",
+    "sdkKey": {
+      "value": "sdk-staging-not-secure"
+    },
+    "defaultTtl": 0,
+    "secureMode": false,
+    "version": 0
+  },
+  "dataId": ""
+}

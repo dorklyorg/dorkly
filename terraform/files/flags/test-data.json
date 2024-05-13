@@ -1,0 +1,100 @@
+{
+  "segments": {},
+  "flags": {
+    "booleanRollout": {
+      "key": "booleanRollout",
+      "on": true,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "rollout": {
+          "contextKind": "user",
+          "variations": [
+            {
+              "variation": 0,
+              "weight": 42000
+            },
+            {
+              "variation": 1,
+              "weight": 58000
+            }
+          ]
+        }
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": true,
+        "usingEnvironmentId": true
+      },
+      "clientSide": true,
+      "salt": "98e0c1edc8364ef283f24e437a2ae8ff",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 1,
+      "deleted": false
+    },
+    "flag1": {
+      "key": "flag1",
+      "on": true,
+      "prerequisites": [],
+      "targets": [
+        {
+          "contextKind": "user",
+          "variation": 0,
+          "values": [
+            "userOn2",
+            "userOn1"
+          ]
+        },
+        {
+          "contextKind": "user",
+          "variation": 1,
+          "values": [
+            "userOff5",
+            "userOff4",
+            "userOff3"
+          ]
+        }
+      ],
+      "contextTargets": [
+        {
+          "contextKind": "user",
+          "variation": 0,
+          "values": []
+        },
+        {
+          "contextKind": "user",
+          "variation": 1,
+          "values": []
+        }
+      ],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": true,
+        "usingEnvironmentId": true
+      },
+      "clientSide": true,
+      "salt": "7deafecbb5b043ad888479ef8ff46724",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 3,
+      "deleted": false
+    }
+  }
+}
