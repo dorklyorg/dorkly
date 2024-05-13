@@ -17,7 +17,7 @@ func Test_FlagBoolean_ToLdFlag(t *testing.T) {
 		{
 			name:     "true,client-side ok",
 			flag:     FlagBoolean{Variation: true},
-			flagBase: FlagBase{Key: "test-key"},
+			flagBase: FlagBase{key: "test-key"},
 			expected: ldmodel.FeatureFlag{
 				Key: "test-key",
 				ClientSideAvailability: ldmodel.ClientSideAvailability{
@@ -35,7 +35,7 @@ func Test_FlagBoolean_ToLdFlag(t *testing.T) {
 			name: "false,server-side only",
 			flag: FlagBoolean{Variation: false},
 			flagBase: FlagBase{
-				Key:            "test-key-2",
+				key:            "test-key-2",
 				ServerSideOnly: true,
 			},
 			expected: ldmodel.FeatureFlag{
@@ -73,7 +73,7 @@ func Test_FlagBooleanRollout_ToLdFlag(t *testing.T) {
 				PercentRollout: 100.0,
 			},
 			flagBase: FlagBase{
-				Key: "test-key",
+				key: "test-key",
 			},
 			expected: ldmodel.FeatureFlag{
 				Key: "test-key",
@@ -109,7 +109,7 @@ func Test_FlagBooleanRollout_ToLdFlag(t *testing.T) {
 				PercentRollout: 10.0,
 			},
 			flagBase: FlagBase{
-				Key: "test-key-10",
+				key: "test-key-10",
 			},
 			expected: ldmodel.FeatureFlag{
 				Key: "test-key-10",

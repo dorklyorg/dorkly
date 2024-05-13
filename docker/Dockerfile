@@ -1,3 +1,4 @@
+# tag should be kept in sync with internal/dorkly/integration_test.go:22
 FROM launchdarkly/ld-relay:8.4.2
 LABEL authors="drichelson"
 

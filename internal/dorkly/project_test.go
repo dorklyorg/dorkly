@@ -18,7 +18,7 @@ var (
 		Flags: map[string]Flag{
 			"boolean1": {
 				FlagBase: FlagBase{
-					Key:            "boolean1",
+					key:            "boolean1",
 					Description:    "Human-readable description of the flag.",
 					Type:           "boolean",
 					ServerSideOnly: false,
@@ -30,7 +30,7 @@ var (
 			},
 			"rollout1": {
 				FlagBase: FlagBase{
-					Key:            "rollout1",
+					key:            "rollout1",
 					Description:    "Human-readable description of the flag.",
 					Type:           "booleanRollout",
 					ServerSideOnly: false,

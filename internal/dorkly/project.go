@@ -79,7 +79,7 @@ func (p *Project) loadFlagsYamlFiles() error {
 				return err
 			}
 
-			p.Flags[flag.Key] = *flag
+			p.Flags[flag.key] = *flag
 		}
 	}
 	return nil
@@ -99,15 +99,10 @@ func (p *Project) loadFlagYamlFile(filePath string) (*Flag, error) {
 		return nil, err
 	}
 	flag := Flag{FlagBase: flagBase}
-
-	flagKeyFromFilename := getFileNameNoSuffix(f.Name())
-	if flagKeyFromFilename != flag.Key {
-		return nil, fmt.Errorf("for file [%s]: expected filename to match key field in file [%s]. Change file name to %s.yml or change key field to %s",
-			f.Name(), flag.Key, flag.Key, flagKeyFromFilename)
-	}
+	flag.key = getFileNameNoSuffix(f.Name())
 	flag.envConfigs = make(map[string]FlagConfigForEnv)
 	for _, env := range p.Environments {
-		flag.envConfigs[env], err = p.loadFlagConfigForEnvYamlFile(flag, filepath.Join(p.path, "environments", env, flag.Key+".yml"))
+		flag.envConfigs[env], err = p.loadFlagConfigForEnvYamlFile(flag, filepath.Join(p.path, "environments", env, flag.key+".yml"))
 		if err != nil {
 			return nil, err
 		}
@@ -141,7 +136,7 @@ func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (Flag
 		}
 		return envData, nil
 	}
-	return nil, fmt.Errorf("unsupported flag type [%s] for flag [%s]", p.Flags[flag.Key].Type, flag.Key)
+	return nil, fmt.Errorf("unsupported flag type [%s] for flag [%s]", p.Flags[flag.key].Type, flag.key)
 }
 
 // ToRelayArchive converts a dorkly Project to a RelayArchive for consumption by ld-relay
@@ -171,7 +166,7 @@ func (p *Project) ToRelayArchive() (*RelayArchive, error) {
 			},
 		}
 		for _, flag := range p.Flags {
-			envs[env].Flags.Flags[flag.Key] = flag.envConfigs[env].ToLdFlag(flag.FlagBase)
+			envs[env].Flags.Flags[flag.key] = flag.envConfigs[env].ToLdFlag(flag.FlagBase)
 		}
 	}
 	return &RelayArchive{envs: envs}, nil

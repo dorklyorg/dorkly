@@ -23,7 +23,7 @@ func TestIntegration_LdRelayCanLoadArchive(t *testing.T) {
 	ctx := context.Background()
 	containerFlagsArchivePath := "/dorkly/flags.tar.gz"
 	containerReq := testcontainers.ContainerRequest{
-		Image:        "launchdarkly/ld-relay:8.4.2",
+		Image:        "launchdarkly/ld-relay:8.4.2", // tag should be kept in sync with docker/Dockerfile
 		ExposedPorts: []string{"8030/tcp"},
 		Env: map[string]string{
 			"FILE_DATA_SOURCE": containerFlagsArchivePath,

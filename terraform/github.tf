@@ -1,6 +1,6 @@
 provider "github" {
 #   token = "" Alternately specified using GITHUB_TOKEN env var
-#   owner = "drichelson"
+   owner = "dorklyorg"
 }
 
 resource "github_repository" "dorkly_repo" {
@@ -11,9 +11,9 @@ resource "github_repository" "dorkly_repo" {
 }
 
 resource "github_actions_variable" "aws_region" {
-  repository       = github_repository.dorkly_repo.name
-  variable_name    = "AWS_REGION"
-  value            = local.aws_region
+  repository    = github_repository.dorkly_repo.name
+  variable_name = "AWS_REGION"
+  value         = local.aws_region
 }
 
 resource "github_actions_secret" "aws_access_key_id" {
@@ -33,15 +33,6 @@ resource "github_repository_file" "dorkly_workflows" {
   branch              = "main"
   file                = ".github/workflows/dorkly.yml"
   content             = file("files/dorkly.yml")
-  commit_message      = "Managed by Terraform"
-  overwrite_on_create = true
-}
-
-resource "github_repository_file" "dorkly_package" {
-  repository          = github_repository.dorkly_repo.name
-  branch              = "main"
-  file                = "package.sh"
-  content             = file("files/package.sh")
   commit_message      = "Managed by Terraform"
   overwrite_on_create = true
 }

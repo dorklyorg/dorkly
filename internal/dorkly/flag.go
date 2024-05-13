@@ -12,7 +12,7 @@ const (
 
 // FlagBase contains the common flag fields shared between environments
 type FlagBase struct {
-	Key            string   `yaml:"key"`
+	key            string
 	Description    string   `yaml:"description"`
 	Type           FlagType `yaml:"type"`
 	ServerSideOnly bool     `yaml:"serverSideOnly"`
@@ -68,7 +68,7 @@ func (f *FlagBooleanRollout) ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag {
 
 func (f *FlagBase) ldFeatureFlagBase() ldmodel.FeatureFlag {
 	return ldmodel.FeatureFlag{
-		Key: f.Key,
+		Key: f.key,
 		ClientSideAvailability: ldmodel.ClientSideAvailability{
 			UsingMobileKey:     !f.ServerSideOnly,
 			UsingEnvironmentID: !f.ServerSideOnly,
@@ -76,7 +76,7 @@ func (f *FlagBase) ldFeatureFlagBase() ldmodel.FeatureFlag {
 		// TODO: ld-relay archive json files also contain a "clientSide": boolean field.. do we need it?
 
 		// TODO: is this an ok salt? users shouldn't have to manage it.
-		Salt: base64.StdEncoding.EncodeToString([]byte(f.Key)),
+		Salt: base64.StdEncoding.EncodeToString([]byte(f.key)),
 	}
 }
 

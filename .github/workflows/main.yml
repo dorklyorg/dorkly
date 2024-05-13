@@ -34,9 +34,6 @@ jobs:
     - name: Extract existing relay archive
       run: tar -xzvf ${{ env.EXISTING_RELAY_ARCHIVE }} -C .
 
-    - name: Create relay flags directory
-      run: mkdir -p ${{ env.NEW_RELAY_ARCHIVE_DIR }}
-
     - name: Convert yaml configs to relay-compatible flags
       run: ./.github/workflows/dorkly
 
