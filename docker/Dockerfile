@@ -11,6 +11,7 @@ ENV FILE_DATA_SOURCE=/dorkly/flags.tar.gz
 # Sets ld-relay log level
 ENV LOG_LEVEL=debug
 
+COPY flags.tar.gz /dorkly/flags.tar.gz
 COPY pull.sh /pull.sh
 COPY run.sh /run.sh
 COPY sqs_listen.sh /sqs_listen.sh
