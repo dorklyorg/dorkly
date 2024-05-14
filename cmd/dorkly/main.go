@@ -13,7 +13,7 @@ const (
 	newRelayArchiveEnvVar      = "NEW_RELAY_ARCHIVE"
 
 	defaultDorklyYamlInputPath    = "project"
-	defaultNewRelayArchiveDirPath = "new_relay_archive"
+	defaultNewRelayArchiveDirPath = "newRelayArchive"
 	defaultExistingRelayArchive   = "flags.tar.gz"
 	defaultNewRelayArchive        = "flags-new.tar.gz"
 )

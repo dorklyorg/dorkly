@@ -9,7 +9,6 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DORKLY_YAML: ./flags
   NEW_RELAY_ARCHIVE_DIR: ./newRelayFlags
   EXISTING_RELAY_ARCHIVE: ./existingRelayFlags.tar.gz
 
@@ -35,9 +34,6 @@ jobs:
 
     - name: Fetch existing relay archive from S3
       run: aws s3 cp s3://dorkly/flags.tar.gz ${{ env.EXISTING_RELAY_ARCHIVE }}
-
-    - name: Extract existing relay archive
-      run: tar -xzvf ${{ env.EXISTING_RELAY_ARCHIVE }} -C .
 
     - name: Convert yaml configs to relay-compatible flags, reconciling with existing relay archive
       run: go run github.com/dorklyorg/dorkly/cmd/dorkly@latest
