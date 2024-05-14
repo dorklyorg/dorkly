@@ -8,6 +8,11 @@ concurrency:
   group: dorkly
   cancel-in-progress: false
 
+env:
+  NEW_RELAY_ARCHIVE_DIR: ./newRelayFlags
+  EXISTING_RELAY_ARCHIVE: ./existingRelayFlags.tar.gz
+  NEW_RELAY_ARCHIVE: ./newRelayFlags.tar.gz
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,8 +39,5 @@ jobs:
     - name: Convert yaml configs to relay-compatible flags, reconciling with existing relay archive
       run: go run github.com/dorklyorg/dorkly/cmd/dorkly@latest
 
-    - name: Package flags into tar.gz file
-      run: tar -czvf flags.tar.gz -C ${{ env.NEW_RELAY_ARCHIVE_DIR }} .
-
     - name: Upload to S3
-      run: aws s3 cp flags.tar.gz s3://dorkly/
+      run: aws s3 cp ${{ env.NEW_RELAY_ARCHIVE }} s3://dorkly/flags.tar.gz

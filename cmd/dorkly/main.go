@@ -57,7 +57,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(existingFlags)
 
 	reconciledRelayArchive, err := dorkly.Reconcile(*existingFlags, *relayArchive)
 	if err != nil {
