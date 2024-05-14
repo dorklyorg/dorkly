@@ -13,11 +13,11 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 	for _, envKey := range compareResult.new {
 		//set all versions to 1
 		newEnv := new.envs[envKey]
-		newEnv.EnvMetadata.Env.Version = 1
-		newEnv.EnvMetadata.IncrementDataId()
-		for flagKey, flag := range newEnv.Flags.Flags {
+		newEnv.metadata.Env.Version = 1
+		newEnv.metadata.IncrementDataId()
+		for flagKey, flag := range newEnv.data.Flags {
 			flag.Version = 1
-			newEnv.Flags.Flags[flagKey] = flag
+			newEnv.data.Flags[flagKey] = flag
 		}
 		new.envs[envKey] = newEnv
 	}
@@ -32,27 +32,27 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 		newEnv := new.envs[envKey]
 
 		// compare env metadata ignoring versions
-		newEnv.EnvMetadata.Env.Version = oldEnv.EnvMetadata.Env.Version
-		if !cmp.Equal(oldEnv.EnvMetadata, newEnv.EnvMetadata) {
-			newEnv.EnvMetadata.Env.Version++
+		newEnv.metadata.Env.Version = oldEnv.metadata.Env.Version
+		if !cmp.Equal(oldEnv.metadata, newEnv.metadata) {
+			newEnv.metadata.Env.Version++
 			shouldChangeDataId = true
 		}
 
 		// compare flags
-		compareResult := compareMaps(oldEnv.Flags.Flags, newEnv.Flags.Flags)
+		compareResult := compareMaps(oldEnv.data.Flags, newEnv.data.Flags)
 		log.Printf("falgs: %+v", compareResult)
 
 		// Process new flags
 		for _, flagKey := range compareResult.new {
-			flag := newEnv.Flags.Flags[flagKey]
+			flag := newEnv.data.Flags[flagKey]
 			flag.Version = 1
-			newEnv.Flags.Flags[flagKey] = flag
+			newEnv.data.Flags[flagKey] = flag
 			shouldChangeDataId = true
 		}
 
 		// Process deleted flags
 		for _, flagKey := range compareResult.deleted {
-			deletedFlag := oldEnv.Flags.Flags[flagKey]
+			deletedFlag := oldEnv.data.Flags[flagKey]
 			deletedFlag.Version++
 			deletedFlag.Deleted = true
 			shouldChangeDataId = true
@@ -61,18 +61,18 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 		// Process existing flags
 		for _, flagKey := range compareResult.existing {
 			// compare flags ignoring versions
-			oldFlag := oldEnv.Flags.Flags[flagKey]
-			newFlag := newEnv.Flags.Flags[flagKey]
+			oldFlag := oldEnv.data.Flags[flagKey]
+			newFlag := newEnv.data.Flags[flagKey]
 			newFlag.Version = oldFlag.Version
 			if !cmp.Equal(oldFlag, newFlag) {
 				newFlag.Version++
-				newEnv.Flags.Flags[flagKey] = newFlag
+				newEnv.data.Flags[flagKey] = newFlag
 				shouldChangeDataId = true
 			}
 		}
 
 		if shouldChangeDataId {
-			newEnv.EnvMetadata.IncrementDataId()
+			newEnv.metadata.IncrementDataId()
 		}
 		new.envs[envKey] = newEnv
 	}

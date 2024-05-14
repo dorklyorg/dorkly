@@ -144,7 +144,7 @@ func (p *Project) ToRelayArchive() (*RelayArchive, error) {
 	envs := make(map[string]Env)
 	for _, env := range p.Environments {
 		envs[env] = Env{
-			EnvMetadata: RelayArchiveEnv{
+			metadata: RelayArchiveEnv{
 				Env: RelayArchiveEnvMetadata{
 					EnvID:    env,
 					EnvKey:   env,
@@ -160,13 +160,13 @@ func (p *Project) ToRelayArchive() (*RelayArchive, error) {
 					Version:    0,
 				},
 			},
-			Flags: RelayArchiveData{
+			data: RelayArchiveData{
 				Segments: make(map[string]ldmodel.Segment),
 				Flags:    make(map[string]ldmodel.FeatureFlag),
 			},
 		}
 		for _, flag := range p.Flags {
-			envs[env].Flags.Flags[flag.key] = flag.envConfigs[env].ToLdFlag(flag.FlagBase)
+			envs[env].data.Flags[flag.key] = flag.envConfigs[env].ToLdFlag(flag.FlagBase)
 		}
 	}
 	return &RelayArchive{envs: envs}, nil

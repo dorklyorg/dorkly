@@ -30,8 +30,8 @@ type RelayArchive struct {
 
 // Env is a representation of the <env>.json and <env>-data.json files in the relay archive
 type Env struct {
-	EnvMetadata RelayArchiveEnv  //`json:"envMetadata"`
-	Flags       RelayArchiveData //`json:"flags"`
+	metadata RelayArchiveEnv
+	data     RelayArchiveData
 }
 
 // RelayArchiveEnv is a representation of the <env>.json file in the relay archive
@@ -80,14 +80,14 @@ func (ra *RelayArchive) MarshalArchiveFilesJson() (map[string][]byte, error) {
 
 	for envName, env := range ra.envs {
 		// create env metadata file: <envName>.json
-		jsonBytes, err := json.MarshalIndent(env.EnvMetadata, "", "  ")
+		jsonBytes, err := json.MarshalIndent(env.metadata, "", "  ")
 		if err != nil {
 			return nil, err
 		}
 		archiveContents[envName+".json"] = jsonBytes
 
 		// create env data file: <envName>-data.json
-		jsonBytes, err = json.MarshalIndent(env.Flags, "", "  ")
+		jsonBytes, err = json.MarshalIndent(env.data, "", "  ")
 		if err != nil {
 			return nil, err
 		}
@@ -192,7 +192,7 @@ func LoadRelayArchive(path string) (*RelayArchive, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Println("Loading new RelayArchive from file:", fullPath)
+	log.Println("Loading RelayArchive from file:", fullPath)
 
 	ad := RelayArchive{path: fullPath, envs: make(map[string]Env)}
 
@@ -207,10 +207,10 @@ func LoadRelayArchive(path string) (*RelayArchive, error) {
 		if strings.HasSuffix(name, "-data.json") {
 			// load flag data
 			envName := filepath.Base(name)
-			envName = strings.TrimSuffix(name, "-data.json")
+			envName = strings.TrimSuffix(envName, "-data.json")
 			log.Println("Found flag data file for env:", envName)
-			flags := RelayArchiveData{}
-			err := json.Unmarshal(fileBytes, &flags)
+			data := RelayArchiveData{}
+			err := json.Unmarshal(fileBytes, &data)
 			if err != nil {
 				return nil, err
 			}
@@ -223,8 +223,8 @@ func LoadRelayArchive(path string) (*RelayArchive, error) {
 			}
 
 			ad.envs[envName] = Env{
-				EnvMetadata: envMetadata,
-				Flags:       flags,
+				metadata: envMetadata,
+				data:     data,
 			}
 		}
 	}
@@ -235,7 +235,7 @@ func LoadRelayArchive(path string) (*RelayArchive, error) {
 	//	return nil, fmt.Errorf("no envs found in dir: %s", path)
 	//}
 	//for envName, env := range ad.envs {
-	//	if env.EnvMetadata.DataId == "" {
+	//	if env.metadata.DataId == "" {
 	//		return nil, fmt.Errorf("env [%s] has no dataId field! Check for well-formed %s.json file", envName, envName)
 	//	}
 	//}

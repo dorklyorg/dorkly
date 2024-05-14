@@ -103,7 +103,7 @@ func testFlagsForEnv(t *testing.T, ctx context.Context, url, env string) {
 
 		relayArchive, err := testProject1.ToRelayArchive()
 		require.Nil(t, err)
-		expectedFlags := relayArchive.envs[env].Flags.Flags
+		expectedFlags := relayArchive.envs[env].data.Flags
 
 		// We need to set the version to 1 because that's always the first delivered version of a flag
 		for key, _ := range expectedFlags {
