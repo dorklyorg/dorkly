@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dorklyflags/dorkly/internal/dorkly"
+	"github.com/dorklyorg/dorkly/internal/dorkly"
 	"log"
 	"os"
 )
