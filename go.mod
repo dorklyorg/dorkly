@@ -1,4 +1,4 @@
-module github.com/dorklyflags/dorkly
+module github.com/dorklyorg/dorkly
 
 go 1.22.2
 
