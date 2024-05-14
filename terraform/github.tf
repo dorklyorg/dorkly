@@ -28,22 +28,13 @@ resource "github_actions_secret" "aws_secret_key_secret" {
   plaintext_value = aws_iam_access_key.dorkly_write_user_access_key.secret
 }
 
-# Upload each file to the repo using the same relative path minus 'files/'
+# Upload each file to the repo using the same relative path minus 'githubFiles/'
 resource "github_repository_file" "dorkly_flags_project" {
-  for_each = toset(
-    [
-      "files/project/project.yml",
-      "files/project/flags/boolean1.yml",
-      "files/project/flags/rollout1.yml",
-      "files/project/environments/production/boolean1.yml",
-      "files/project/environments/staging/boolean1.yml",
-      "files/project/environments/production/rollout1.yml",
-      "files/project/environments/staging/rollout1.yml",
-    ])
+  for_each = fileset("${path.module}/githubFiles", "**")
   repository          = github_repository.dorkly_repo.name
   branch              = "main"
-  file                = trimprefix(each.key, "files/")
-  content             = file(each.key)
+  file                = trimprefix(each.key, "githubFiles/")
+  content             = file("githubFiles/${each.key}")
   commit_message      = "Managed by Terraform"
   overwrite_on_create = true
 }

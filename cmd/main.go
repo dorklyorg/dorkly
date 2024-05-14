@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/drichelson/dorkly/internal/dorkly"
+	"github.com/dorklyflags/dorkly/internal/dorkly"
 	"log"
 	"os"
 )
@@ -12,7 +12,7 @@ const (
 	existingRelayArchiveEnvVar = "EXISTING_RELAY_ARCHIVE"
 	newRelayArchiveEnvVar      = "NEW_RELAY_ARCHIVE"
 
-	defaultDorklyYamlInputPath    = "flags"
+	defaultDorklyYamlInputPath    = "project"
 	defaultNewRelayArchiveDirPath = "new_relay_archive"
 	defaultExistingRelayArchive   = "flags.tar.gz"
 	defaultNewRelayArchive        = "flags-new.tar.gz"

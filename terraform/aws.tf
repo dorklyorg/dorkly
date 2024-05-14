@@ -1,5 +1,6 @@
 locals {
   aws_region = "us-west-2"
+  flagArchive = "flags.tar.gz"
 }
 
 data "aws_caller_identity" "current" {}
@@ -91,6 +92,20 @@ resource "aws_sqs_queue" "dorkly_queue" {
 # S3 Bucket
 resource "aws_s3_bucket" "dorkly_bucket" {
   bucket = "dorkly"
+}
+
+data "aws_s3_object" "existing_flag_archive" {
+  bucket = aws_s3_bucket.dorkly_bucket.bucket
+  key    = local.flagArchive
+}
+
+# We only want to upload the flags archive if it doesn't already exist.
+resource "aws_s3_object" "maybe_upload_flag_archive" {
+  count  = data.aws_s3_object.existing_flag_archive.body == null ? 1 : 0
+  bucket = aws_s3_bucket.dorkly_bucket.bucket
+  key    = local.flagArchive
+  source = "flags.tar.gz"
+  acl    = "private"
 }
 
 # S3 Bucket Notification

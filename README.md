@@ -1,7 +1,6 @@
 # dorkly
 
 ### Process:
-
 1. Load config
 2. Load local yaml files
 3. Convert to ld structs
@@ -12,12 +11,30 @@
 8. Create ld-relay archive of json + checksum files
 9. Save locally (testing) or upload to S3 (production)
 
+### Terraform
+Requirements:
+1. AWS credentials with permissions to create S3 buckets, Lightsail containers, SQS queues, and IAM roles.
+2. Github token with permissions to create repos, secrets, and actions.
+3. Terraform installed on your machine.
+
+To run the terraform you need to have both AWS and Github credentials. Here's an example:
+```bash
+AWS_PROFILE=<aws profile> GITHUB_TOKEN=<github token allowing repo creation etc> terraform apply
+```
+
+### Go code
+The go code will run in Github Actions so it need to be built for linux. Here's how to update the binary used by terraform:
+```bash
+GOOS=linux GOARCH=amd64 go build -o ./terraform/files/.github/workflows/dorkly ./cmd
+```
 
 ### Ideas for later:
-
-1. https://full-stack.blend.com/how-we-write-github-actions-in-go.html#introduction
+1. Create Github releases with human-readable diffs of flag changes
+2. https://full-stack.blend.com/how-we-write-github-actions-in-go.html#introduction
 2. Part of Github actions: connect to relay and await changes.
 3. PR check to ensure well-formed yaml files
+4. Publish a Github action? then we don't need to check in a binary
+5. Send Slack notifications on changes.
 
 
 ### Current functionality is limited to a subset of LaunchDarkly's feature flag types.

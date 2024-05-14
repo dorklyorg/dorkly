@@ -11,7 +11,7 @@ concurrency:
 env:
   DORKLY_YAML: ./flags
   NEW_RELAY_ARCHIVE_DIR: ./newRelayFlags
-  EXISTING_RELAY_ARCHIVE: ./currentFlags.tar.gz
+  EXISTING_RELAY_ARCHIVE: ./existingRelayFlags.tar.gz
 
 jobs:
   build:
@@ -28,14 +28,19 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ vars.AWS_REGION }}
 
+    - name: Set up Go
+      uses: actions/setup-go@v5 # see https://github.com/actions/setup-go/tags for latest version
+      with:
+        go-version: '1.22.2'
+
     - name: Fetch existing relay archive from S3
       run: aws s3 cp s3://dorkly/flags.tar.gz ${{ env.EXISTING_RELAY_ARCHIVE }}
 
     - name: Extract existing relay archive
       run: tar -xzvf ${{ env.EXISTING_RELAY_ARCHIVE }} -C .
 
-    - name: Convert yaml configs to relay-compatible flags
-      run: ./.github/workflows/dorkly
+    - name: Convert yaml configs to relay-compatible flags, reconciling with existing relay archive
+      run: go run
 
     - name: Package flags into tar.gz file
       run: tar -czvf flags.tar.gz -C ${{ env.NEW_RELAY_ARCHIVE_DIR }} .
