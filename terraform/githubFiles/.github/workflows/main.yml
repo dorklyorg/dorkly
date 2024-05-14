@@ -8,10 +8,6 @@ concurrency:
   group: dorkly
   cancel-in-progress: false
 
-env:
-  NEW_RELAY_ARCHIVE_DIR: ./newRelayFlags
-  EXISTING_RELAY_ARCHIVE: ./existingRelayFlags.tar.gz
-
 jobs:
   build:
     runs-on: ubuntu-latest
