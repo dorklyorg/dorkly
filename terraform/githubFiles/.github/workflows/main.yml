@@ -40,7 +40,7 @@ jobs:
       run: tar -xzvf ${{ env.EXISTING_RELAY_ARCHIVE }} -C .
 
     - name: Convert yaml configs to relay-compatible flags, reconciling with existing relay archive
-      run: go run
+      run: go run github.com/dorklyorg/dorkly/cmd/dorkly@latest
 
     - name: Package flags into tar.gz file
       run: tar -czvf flags.tar.gz -C ${{ env.NEW_RELAY_ARCHIVE_DIR }} .

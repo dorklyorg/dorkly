@@ -1,4 +1,5 @@
 # dorkly
+Current status: not ready for public consumption. Stay tuned.
 
 ### Process:
 1. Load config
