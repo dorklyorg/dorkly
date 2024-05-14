@@ -33,6 +33,14 @@ func Test_ArchiveEnvironmentRep_IncrementDataId(t *testing.T) {
 	}
 }
 
+func Test_LoadRelayArchive(t *testing.T) {
+	actual, err := LoadRelayArchive("testdata/flags.tar.gz")
+	require.Nil(t, err)
+
+	assert.Len(t, actual.envs, 2)
+	// TODO: lots more testing
+}
+
 func Test_DirectoryToTarGz(t *testing.T) {
 	archiveFilePath := filepath.Join(os.TempDir(), "Test_DirectoryToTarGz.tar.gz")
 	err := DirectoryToTarGz("testdata", archiveFilePath)

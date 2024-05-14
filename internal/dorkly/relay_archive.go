@@ -206,8 +206,7 @@ func LoadRelayArchive(path string) (*RelayArchive, error) {
 		log.Println("Processing file:", name)
 		if strings.HasSuffix(name, "-data.json") {
 			// load flag data
-			envName := filepath.Base(name)
-			envName = strings.TrimSuffix(envName, "-data.json")
+			envName := strings.TrimSuffix(name, "-data.json")
 			log.Println("Found flag data file for env:", envName)
 			data := RelayArchiveData{}
 			err := json.Unmarshal(fileBytes, &data)
@@ -273,7 +272,8 @@ func readTarGz(srcFile string) (map[string][]byte, error) {
 		if _, err := io.Copy(&buf, tr); err != nil {
 			return nil, err
 		}
-		contents[header.Name] = buf.Bytes()
+		// We expect all files to be in the root directory of the archive so we strip out the leading ./ from the filename
+		contents[filepath.Base(header.Name)] = buf.Bytes()
 	}
 
 	return contents, nil

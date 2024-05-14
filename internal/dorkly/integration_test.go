@@ -29,7 +29,7 @@ func TestIntegration_LdRelayCanLoadArchive(t *testing.T) {
 			"FILE_DATA_SOURCE": containerFlagsArchivePath,
 		},
 		Files: []testcontainers.ContainerFile{{
-			HostFilePath:      "testdata/integration_test/flags.tar.gz",
+			HostFilePath:      "testdata/flags.tar.gz",
 			ContainerFilePath: containerFlagsArchivePath,
 			FileMode:          0755,
 		}},
