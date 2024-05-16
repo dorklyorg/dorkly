@@ -1,11 +1,13 @@
 package dorkly
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func Test_ArchiveEnvironmentRep_IncrementDataId(t *testing.T) {
@@ -33,12 +35,29 @@ func Test_ArchiveEnvironmentRep_IncrementDataId(t *testing.T) {
 	}
 }
 
-func Test_LoadRelayArchive(t *testing.T) {
-	actual, err := LoadRelayArchive("testdata/flags.tar.gz")
+// Ensures the round trip of archive -> files -> unmarshaling -> marshaling -> files -> archive works as expected.
+func Test_RelayArchive_RoundTrip(t *testing.T) {
+	// 1. Load a relay archive from a tar.gz file in testdata:
+	testdataArchive, err := LoadRelayArchive("testdata/flags.tar.gz")
 	require.Nil(t, err)
 
-	assert.Len(t, actual.envs, 2)
-	// TODO: lots more testing
+	assert.Len(t, testdataArchive.envs, 2)
+	//TODO: Add more assertions here
+
+	// 2. Create all files for a new archive in a temporary directory:
+	archiveFileInputDir := filepath.Join(os.TempDir(), fmt.Sprintf("archiveFileInputDir_%v", +time.Now().UnixMilli()))
+	err = testdataArchive.CreateArchiveFilesAndComputeChecksum(archiveFileInputDir)
+	require.Nil(t, err)
+
+	// 3. Create a new archive from the files in the temporary directory:
+	archiveOutputPath := filepath.Join(os.TempDir(), "flags.tar.gz")
+	err = DirectoryToTarGz(archiveFileInputDir, archiveOutputPath)
+	require.Nil(t, err)
+
+	// 4. Load the new archive and compare it to the original:
+	newArchive, err := LoadRelayArchive(archiveOutputPath)
+	require.Nil(t, err)
+	assert.Equal(t, testdataArchive, newArchive)
 }
 
 func Test_DirectoryToTarGz(t *testing.T) {

@@ -24,7 +24,6 @@ const (
 
 // RelayArchive represents the data consumed by ld-relay in offline mode
 type RelayArchive struct {
-	path string
 	envs map[string]Env
 }
 
@@ -194,7 +193,7 @@ func LoadRelayArchive(path string) (*RelayArchive, error) {
 	}
 	log.Println("Loading RelayArchive from file:", fullPath)
 
-	ad := RelayArchive{path: fullPath, envs: make(map[string]Env)}
+	ad := RelayArchive{envs: make(map[string]Env)}
 
 	archiveContents, err := readTarGz(fullPath)
 	if err != nil {

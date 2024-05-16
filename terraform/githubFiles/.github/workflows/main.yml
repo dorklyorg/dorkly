@@ -37,7 +37,7 @@ jobs:
       run: aws s3 cp s3://dorkly/flags.tar.gz ${{ env.EXISTING_RELAY_ARCHIVE }}
 
     - name: Convert yaml configs to relay-compatible flags, reconciling with existing relay archive
-      run: go run github.com/dorklyorg/dorkly/cmd/dorkly@latest
+      run: go run github.com/dorklyorg/dorkly/cmd/dorkly
 
     - name: Upload to S3
       run: aws s3 cp ${{ env.NEW_RELAY_ARCHIVE }} s3://dorkly/flags.tar.gz

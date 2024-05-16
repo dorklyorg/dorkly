@@ -6,7 +6,7 @@ import (
 )
 
 func Reconcile(old, new RelayArchive) (RelayArchive, error) {
-	compareResult := compareMaps(old.envs, new.envs)
+	compareResult := compareMapKeys(old.envs, new.envs)
 	log.Printf("environments: %+v", compareResult)
 
 	// Process new envs
@@ -39,7 +39,7 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 		}
 
 		// compare flags
-		compareResult := compareMaps(oldEnv.data.Flags, newEnv.data.Flags)
+		compareResult := compareMapKeys(oldEnv.data.Flags, newEnv.data.Flags)
 		log.Printf("falgs: %+v", compareResult)
 
 		// Process new flags
@@ -85,24 +85,25 @@ type compareResult struct {
 	existing []string
 }
 
-func compareMaps[T any](old, new map[string]T) compareResult {
+// compareMapKeys compares two maps and returns the keys that are new, existing, and deleted
+func compareMapKeys[T any](old, new map[string]T) compareResult {
 	deletedKeys, newKeys, existingKeys := make([]string, 0), make([]string, 0), make([]string, 0)
 
-	// check for existing/deleted envs
-	for envKey, _ := range old {
-		_, ok := new[envKey]
+	// check for existing/deleted keys
+	for key, _ := range old {
+		_, ok := new[key]
 		if ok {
-			existingKeys = append(existingKeys, envKey)
+			existingKeys = append(existingKeys, key)
 		} else {
-			deletedKeys = append(deletedKeys, envKey)
+			deletedKeys = append(deletedKeys, key)
 		}
 	}
 
-	// check for new envs
-	for envKey, _ := range new {
-		_, ok := old[envKey]
+	// check for new keys
+	for key, _ := range new {
+		_, ok := old[key]
 		if !ok {
-			newKeys = append(newKeys, envKey)
+			newKeys = append(newKeys, key)
 		}
 	}
 
