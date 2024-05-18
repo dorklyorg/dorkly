@@ -1,8 +1,8 @@
 package dorkly
 
 import (
-	"github.com/google/go-cmp/cmp"
 	"log"
+	"reflect"
 )
 
 func Reconcile(old, new RelayArchive) (RelayArchive, error) {
@@ -13,8 +13,8 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 	for _, envKey := range compareResult.new {
 		//set all versions to 1
 		newEnv := new.envs[envKey]
-		newEnv.metadata.Env.Version = 1
-		newEnv.metadata.IncrementDataId()
+		newEnv.metadata.EnvMetadata.Version = 1
+		newEnv.metadata.incrementDataId()
 		for flagKey, flag := range newEnv.data.Flags {
 			flag.Version = 1
 			newEnv.data.Flags[flagKey] = flag
@@ -32,15 +32,15 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 		newEnv := new.envs[envKey]
 
 		// compare env metadata ignoring versions
-		newEnv.metadata.Env.Version = oldEnv.metadata.Env.Version
-		if !cmp.Equal(oldEnv.metadata, newEnv.metadata) {
-			newEnv.metadata.Env.Version++
+		newEnv.metadata.EnvMetadata.Version = oldEnv.metadata.EnvMetadata.Version
+		if !reflect.DeepEqual(oldEnv.metadata, newEnv.metadata) {
+			newEnv.metadata.EnvMetadata.Version++
 			shouldChangeDataId = true
 		}
 
 		// compare flags
 		compareResult := compareMapKeys(oldEnv.data.Flags, newEnv.data.Flags)
-		log.Printf("falgs: %+v", compareResult)
+		log.Printf("flags: %+v", compareResult)
 
 		// Process new flags
 		for _, flagKey := range compareResult.new {
@@ -64,7 +64,7 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 			oldFlag := oldEnv.data.Flags[flagKey]
 			newFlag := newEnv.data.Flags[flagKey]
 			newFlag.Version = oldFlag.Version
-			if !cmp.Equal(oldFlag, newFlag) {
+			if !reflect.DeepEqual(oldFlag, newFlag) {
 				newFlag.Version++
 				newEnv.data.Flags[flagKey] = newFlag
 				shouldChangeDataId = true
@@ -72,7 +72,7 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 		}
 
 		if shouldChangeDataId {
-			newEnv.metadata.IncrementDataId()
+			newEnv.metadata.incrementDataId()
 		}
 		new.envs[envKey] = newEnv
 	}

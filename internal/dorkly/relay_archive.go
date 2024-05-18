@@ -35,7 +35,7 @@ type Env struct {
 
 // RelayArchiveEnv is a representation of the <env>.json file in the relay archive
 type RelayArchiveEnv struct {
-	Env RelayArchiveEnvMetadata `json:"env"`
+	EnvMetadata RelayArchiveEnvMetadata `json:"env"`
 
 	// this must be changed in order for flag changes to be picked up.
 	// the official relay archive uses a double-quoted string like this: "\"<value>\""
@@ -45,8 +45,13 @@ type RelayArchiveEnv struct {
 	dataId int
 }
 
-func (a *RelayArchiveEnv) IncrementDataId() {
+func (a *RelayArchiveEnv) incrementDataId() {
 	a.dataId++
+	a.setDataId(a.dataId)
+}
+
+func (a *RelayArchiveEnv) setDataId(dataId int) {
+	a.dataId = dataId
 	a.DataId = fmt.Sprintf("\"%d\"", a.dataId)
 }
 
@@ -60,7 +65,7 @@ type RelayArchiveEnvMetadata struct {
 	SDKKey     SDKKeyRep `json:"sdkKey"`
 	DefaultTTL int       `json:"defaultTtl"`
 	SecureMode bool      `json:"secureMode"`
-	Version    int       `json:"version"`
+	Version    int       `json:"versionV"`
 }
 
 type SDKKeyRep struct {
@@ -228,7 +233,7 @@ func LoadRelayArchive(path string) (*RelayArchive, error) {
 	}
 
 	// basic validation
-	//log.Println("Performing sanity checks on loaded files...")
+	//log.Println("Performing sanity checks variation loaded files...")
 	//if len(ad.envs) == 0 {
 	//	return nil, fmt.Errorf("no envs found in dir: %s", path)
 	//}

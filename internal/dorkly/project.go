@@ -145,7 +145,7 @@ func (p *Project) ToRelayArchive() (*RelayArchive, error) {
 	for _, env := range p.Environments {
 		envs[env] = Env{
 			metadata: RelayArchiveEnv{
-				Env: RelayArchiveEnvMetadata{
+				EnvMetadata: RelayArchiveEnvMetadata{
 					EnvID:    env,
 					EnvKey:   env,
 					EnvName:  env,

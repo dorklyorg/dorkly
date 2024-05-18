@@ -1,13 +1,11 @@
 package dorkly
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 )
 
 func Test_ArchiveEnvironmentRep_IncrementDataId(t *testing.T) {
@@ -29,7 +27,7 @@ func Test_ArchiveEnvironmentRep_IncrementDataId(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.input.IncrementDataId()
+			tt.input.incrementDataId()
 			assert.Equal(t, tt.expected, tt.input)
 		})
 	}
@@ -45,12 +43,12 @@ func Test_RelayArchive_RoundTrip(t *testing.T) {
 	//TODO: Add more assertions here
 
 	// 2. Create all files for a new archive in a temporary directory:
-	archiveFileInputDir := filepath.Join(os.TempDir(), fmt.Sprintf("archiveFileInputDir_%v", +time.Now().UnixMilli()))
+	archiveFileInputDir := filepath.Join(t.TempDir(), "archiveFileInputDir")
 	err = testdataArchive.CreateArchiveFilesAndComputeChecksum(archiveFileInputDir)
 	require.Nil(t, err)
 
 	// 3. Create a new archive from the files in the temporary directory:
-	archiveOutputPath := filepath.Join(os.TempDir(), "flags.tar.gz")
+	archiveOutputPath := filepath.Join(t.TempDir(), "flags.tar.gz")
 	err = DirectoryToTarGz(archiveFileInputDir, archiveOutputPath)
 	require.Nil(t, err)
 
@@ -61,7 +59,7 @@ func Test_RelayArchive_RoundTrip(t *testing.T) {
 }
 
 func Test_DirectoryToTarGz(t *testing.T) {
-	archiveFilePath := filepath.Join(os.TempDir(), "Test_DirectoryToTarGz.tar.gz")
+	archiveFilePath := filepath.Join(t.TempDir(), "Test_DirectoryToTarGz.tar.gz")
 	err := DirectoryToTarGz("testdata", archiveFilePath)
 	require.Nil(t, err)
 

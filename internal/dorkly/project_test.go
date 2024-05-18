@@ -8,7 +8,6 @@ import (
 )
 
 var (
-
 	// This struct is re-used across tests. It is defined here to avoid duplication.
 	// It must be kept in sync with the files in testdata/testProject1 in order for tests to pass.
 	testProject1 = Project{
