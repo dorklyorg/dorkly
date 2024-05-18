@@ -55,7 +55,9 @@ func Reconcile(old, new RelayArchive) (RelayArchive, error) {
 			deletedFlag := oldEnv.data.Flags[flagKey]
 			deletedFlag.Version++
 			deletedFlag.Deleted = true
+			newEnv.data.Flags[flagKey] = deletedFlag
 			shouldChangeDataId = true
+
 		}
 
 		// Process existing flags

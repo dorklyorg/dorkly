@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/launchdarkly/go-server-sdk-evaluation/v3/ldmodel"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -17,7 +16,20 @@ func Test_Reconcile(t *testing.T) {
 		wantErr  assert.ErrorAssertionFunc
 	}{
 		{
-			name: "same",
+			name: "no change",
+			old: relayArchive().
+				env(env("staging").version(1).dataId(1).
+					flag(booleanFlag("flag1").variation(false).version(1))),
+			new: relayArchive().
+				env(env("staging").version(1).dataId(1).
+					flag(booleanFlag("flag1").variation(false).version(1))),
+			expected: relayArchive().
+				env(env("staging").version(1).dataId(1).
+					flag(booleanFlag("flag1").variation(false).version(1))),
+			wantErr: assert.NoError,
+		},
+		{
+			name: "toggle flag",
 			old: relayArchive().
 				env(env("staging").version(1).dataId(1).
 					flag(booleanFlag("flag1").variation(false).version(1))),
@@ -27,6 +39,18 @@ func Test_Reconcile(t *testing.T) {
 			expected: relayArchive().
 				env(env("staging").version(1).dataId(2).
 					flag(booleanFlag("flag1").variation(true).version(2))),
+			wantErr: assert.NoError,
+		},
+		{
+			name: "deleted flag",
+			old: relayArchive().
+				env(env("staging").version(1).dataId(1).
+					flag(booleanFlag("flag1").variation(false).version(1))),
+			new: relayArchive().
+				env(env("staging").version(1).dataId(1)),
+			expected: relayArchive().
+				env(env("staging").version(1).dataId(2).
+					flag(booleanFlag("flag1").variation(false).version(2).deleted(true))),
 			wantErr: assert.NoError,
 		},
 	}
@@ -44,14 +68,9 @@ func Test_Reconcile(t *testing.T) {
 type relayArchiveBuilder struct {
 	projKey string
 	RelayArchive
-	//envStaging         RelayArchiveEnv
-	//envProd            RelayArchiveEnv
-	//flagBooleanRollout ldmodel.FeatureFlag
-	//flagBoolean        ldmodel.FeatureFlag
 }
 
 func relayArchive() relayArchiveBuilder {
-	//testProject1 := relayArchive_testProject1(t)
 	return relayArchiveBuilder{
 		RelayArchive: RelayArchive{map[string]Env{}},
 	}
@@ -59,6 +78,11 @@ func relayArchive() relayArchiveBuilder {
 
 func (b relayArchiveBuilder) projectKey(projectKey string) relayArchiveBuilder {
 	b.projKey = projectKey
+	return b
+}
+
+func (b relayArchiveBuilder) env(envBuilder envBuilder) relayArchiveBuilder {
+	b.envs[envBuilder.Env.metadata.EnvMetadata.EnvKey] = envBuilder.Env
 	return b
 }
 
@@ -79,11 +103,11 @@ func env(key string) envBuilder {
 			Flags: map[string]ldmodel.FeatureFlag{},
 		}}}
 }
-
 func (b envBuilder) dataId(dataId int) envBuilder {
 	b.Env.metadata.setDataId(dataId)
 	return b
 }
+
 func (b envBuilder) version(version int) envBuilder {
 	b.Env.metadata.EnvMetadata.Version = version
 	return b
@@ -95,23 +119,14 @@ func (b envBuilder) flag(flagBuilder flagBuilder) envBuilder {
 	return b
 }
 
-func (b relayArchiveBuilder) env(envBuilder envBuilder) relayArchiveBuilder {
-	b.envs[envBuilder.Env.metadata.EnvMetadata.EnvKey] = envBuilder.Env
-	return b
-}
-
-//func (b envBuilder) flag(f ldmodel.FeatureFlag) envBuilder {
-//	b.data.Flags[f.Key] = f
-//	return b
-//}
-
 type flagBuilder interface {
 	toLdFlag() ldmodel.FeatureFlag
 }
 
 type flagBuilderBase struct {
 	FlagBase
-	versionV int
+	versionV  int
+	isDeleted bool
 }
 
 type booleanFlagBuilder struct {
@@ -123,6 +138,11 @@ func booleanFlag(key string) booleanFlagBuilder {
 	return booleanFlagBuilder{
 		flagBuilderBase: flagBuilderBase{FlagBase: FlagBase{key: key}},
 	}
+}
+
+func (b booleanFlagBuilder) deleted(isDeleted bool) booleanFlagBuilder {
+	b.isDeleted = isDeleted
+	return b
 }
 
 func (b booleanFlagBuilder) variation(variation bool) booleanFlagBuilder {
@@ -149,29 +169,9 @@ func (b booleanFlagBuilder) toLdFlag() ldmodel.FeatureFlag {
 
 	ldFlag := f.ToLdFlag(flagBase)
 	ldFlag.Version = b.versionV
+	ldFlag.Deleted = b.isDeleted
 
 	return ldFlag
-}
-
-//func (b *relayArchiveBuilder) build() RelayArchive {
-//	return b.ra
-//}
-
-//
-//func (r *relayArchiveBuilder) withEnvStaging() *relayArchiveBuilder {
-//	r.relayArchive.envs["staging"] = EnvMetadata{metadata: r.envStaging, data: RelayArchiveData{}}
-//	return r
-//}
-//
-//func (r *relayArchiveBuilder) withEnvProduction() *relayArchiveBuilder {
-//	r.relayArchive.envs["production"] = EnvMetadata{metadata: r.envStaging, data: RelayArchiveData{}}
-//	return r
-//}
-
-func relayArchive_testProject1(t *testing.T) RelayArchive {
-	archive, err := testProject1.ToRelayArchive()
-	require.Nil(t, err)
-	return *archive
 }
 
 func Test_compareMaps(t *testing.T) {
