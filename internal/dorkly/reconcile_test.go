@@ -42,6 +42,23 @@ func Test_Reconcile(t *testing.T) {
 			wantErr: assert.NoError,
 		},
 		{
+			name: "new flag",
+			old: relayArchive().
+				env(env("staging").version(1).dataId(1).
+					flag(booleanFlag("flag1").variation(false).version(1))),
+			new: relayArchive().
+				env(env("staging").version(1).dataId(1).
+					flag(booleanFlag("flag1").variation(false).version(1)).
+					flag(booleanFlag("flag2").variation(true).version(1)),
+				),
+			expected: relayArchive().
+				env(env("staging").version(1).dataId(2).
+					flag(booleanFlag("flag1").variation(false).version(1)).
+					flag(booleanFlag("flag2").variation(true).version(1)),
+				),
+			wantErr: assert.NoError,
+		},
+		{
 			name: "deleted flag",
 			old: relayArchive().
 				env(env("staging").version(1).dataId(1).

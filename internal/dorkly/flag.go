@@ -31,16 +31,16 @@ type FlagConfigForEnv interface {
 	ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag
 }
 
-// FlagBoolean is a boolean flag that is either variation (true) or off (false)
+// FlagBoolean is a boolean flag that is either on (true) or off (false)
 type FlagBoolean struct {
-	Variation bool `yaml:"variationV"`
+	Variation bool `yaml:"variation"`
 }
 
 func (f *FlagBoolean) ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag {
 	return flagBase.ldFeatureFlagBoolean(f.Variation)
 }
 
-// FlagBooleanRollout is a boolean flag that is variation (true) for a percentage of users based variation the id field
+// FlagBooleanRollout is a boolean flag that is on (true) for a percentage of users based on the id field
 type FlagBooleanRollout struct {
 	PercentRollout float64 `yaml:"percentRollout"`
 }

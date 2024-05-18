@@ -65,7 +65,7 @@ type RelayArchiveEnvMetadata struct {
 	SDKKey     SDKKeyRep `json:"sdkKey"`
 	DefaultTTL int       `json:"defaultTtl"`
 	SecureMode bool      `json:"secureMode"`
-	Version    int       `json:"versionV"`
+	Version    int       `json:"version"`
 }
 
 type SDKKeyRep struct {
@@ -233,7 +233,7 @@ func LoadRelayArchive(path string) (*RelayArchive, error) {
 	}
 
 	// basic validation
-	//log.Println("Performing sanity checks variation loaded files...")
+	//log.Println("Performing sanity checks on loaded files...")
 	//if len(ad.envs) == 0 {
 	//	return nil, fmt.Errorf("no envs found in dir: %s", path)
 	//}

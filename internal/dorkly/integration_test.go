@@ -33,7 +33,7 @@ func TestIntegration_LdRelayCanLoadArchive(t *testing.T) {
 			ContainerFilePath: containerFlagsArchivePath,
 			FileMode:          0755,
 		}},
-		WaitingFor: wait.ForLog("Starting server listening variation port 8030"),
+		WaitingFor: wait.ForLog("Starting server listening on port 8030"),
 	}
 	relayContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: containerReq,
@@ -105,7 +105,7 @@ func testFlagsForEnv(t *testing.T, ctx context.Context, url, env string) {
 		require.Nil(t, err)
 		expectedFlags := relayArchive.envs[env].data.Flags
 
-		// We need to set the versionV to 1 because that's always the first delivered versionV of a flag
+		// We need to set the version to 1 because that's always the first delivered version of a flag
 		for key, _ := range expectedFlags {
 			f := expectedFlags[key]
 			f.Version = 1
@@ -124,7 +124,7 @@ func testFlagsForEnv(t *testing.T, ctx context.Context, url, env string) {
 type StatusRep struct {
 	Environments  map[string]EnvironmentStatusRep `json:"environments"`
 	Status        string                          `json:"status"`
-	Version       string                          `json:"versionV"`
+	Version       string                          `json:"version"`
 	ClientVersion string                          `json:"clientVersion"`
 }
 
