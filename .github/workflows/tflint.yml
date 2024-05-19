@@ -17,13 +17,13 @@ jobs:
         uses: actions/checkout@v4
 
       # TFLint - Terraform Check
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         name: Cache plugin dir
         with:
           path: ~/.tflint.d/plugins
           key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
 
-      - uses: terraform-linters/setup-tflint@v2
+      - uses: terraform-linters/setup-tflint@v4
         name: Setup TFLint
         with:
           github_token: ${{ secrets.CI_GITHUB_TOKEN }}
