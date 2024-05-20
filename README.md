@@ -26,7 +26,14 @@ AWS_PROFILE=<aws profile> GITHUB_TOKEN=<github token allowing repo creation etc>
 ### Go code
 The go code will run in Github Actions so it need to be built for linux. Here's how to update the binary used by terraform:
 ```bash
-GOOS=linux GOARCH=amd64 go build -o ./terraform/files/.github/workflows/dorkly ./cmd
+GOOS=linux GOARCH=amd64 go build -o ./terraform/files/.github/workflows/dorkly ./cmd/dorkly
+```
+
+### Docker
+The Dockerfile is used to build the image used in the deployed backend service. It is built on top of the ld-relay image.
+To build and publish it: (requires docker login with permissions to push to drichelson)
+```bash
+docker build --platform=linux/amd64 -t drichelson/dorkly:latest ./docker/ && docker push drichelson/dorkly:latest
 ```
 
 ### Ideas for later:
@@ -45,7 +52,7 @@ Here's what is supported:
 - Only the user context kind is supported
 - server-side flags and client-side flags (can exclude client-side on a per-flag basis)
 
-Feature ideas for later:
+Ideas for later later
 1. Segments
 2. String variation flags
 3. Number variation flags
