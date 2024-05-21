@@ -2,6 +2,7 @@ package dorkly
 
 import (
 	"context"
+	"errors"
 	"log"
 	"reflect"
 )
@@ -21,7 +22,12 @@ func NewReconciler(archiveService RelayArchiveService, projectYamlPath string) *
 func (r *Reconciler) Reconcile(ctx context.Context) error {
 	existingArchive, err := r.archiveService.fetchExisting(ctx)
 	if err != nil {
-		return err
+		if errors.Is(err, ErrExistingArchiveNotFound) {
+			log.Println("Existing archive not found. Creating new empty archive.")
+			existingArchive = &RelayArchive{}
+		} else {
+			return err
+		}
 	}
 
 	project, err := loadProjectYamlFiles(r.projectYamlPath)

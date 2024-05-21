@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/dorklyorg/dorkly/internal/dorkly"
 	"log"
 	"os"
@@ -9,46 +11,35 @@ import (
 
 const (
 	dorklyYamlEnvVar           = "DORKLY_YAML"
-	newRelayArchiveDirEnvVar   = "NEW_RELAY_ARCHIVE_DIR"
-	existingRelayArchiveEnvVar = "EXISTING_RELAY_ARCHIVE"
-	newRelayArchiveEnvVar      = "NEW_RELAY_ARCHIVE"
+	defaultDorklyYamlInputPath = "project"
 
-	defaultDorklyYamlInputPath    = "project"
-	defaultNewRelayArchiveDirPath = "newRelayArchive"
-	defaultExistingRelayArchive   = "flags.tar.gz"
-	defaultNewRelayArchive        = "flags-new.tar.gz"
+	s3BucketEnvVar = "DORKLY_S3_BUCKET"
 )
 
 func main() {
-	//TODO: use a config library to manage these env vars
+	ctx := context.Background()
 	dorklyYamlInputPath := os.Getenv(dorklyYamlEnvVar)
 	if dorklyYamlInputPath == "" {
-		log.Printf(dorklyYamlEnvVar+" env var not set. Using default: %s", defaultDorklyYamlInputPath)
+		log.Printf("Env var [%s] not set. Using default: %s", dorklyYamlEnvVar, defaultDorklyYamlInputPath)
 		dorklyYamlInputPath = defaultDorklyYamlInputPath
 	}
 
-	newRelayArchiveDirPath := os.Getenv(newRelayArchiveDirEnvVar)
-	if newRelayArchiveDirPath == "" {
-		log.Printf(newRelayArchiveDirEnvVar + " env var not set. Using default: " + defaultNewRelayArchiveDirPath)
-		newRelayArchiveDirPath = defaultNewRelayArchiveDirPath
+	s3Bucket := os.Getenv(s3BucketEnvVar)
+	if s3Bucket == "" {
+		log.Fatalf("Required env var [%s] not set.", s3BucketEnvVar)
 	}
 
-	existingRelayArchivePath := os.Getenv(existingRelayArchiveEnvVar)
-	if existingRelayArchivePath == "" {
-		log.Printf(existingRelayArchiveEnvVar + " env var not set. Using default: " + defaultExistingRelayArchive)
-		existingRelayArchivePath = defaultExistingRelayArchive
+	sdkConfig, err := config.LoadDefaultConfig(ctx)
+	if err != nil {
+		log.Fatalf("Couldn't load default aws configuration. Have you set up your AWS account? %v", err)
+		return
 	}
 
-	newRelayArchivePath := os.Getenv(newRelayArchiveEnvVar)
-	if newRelayArchivePath == "" {
-		log.Printf(newRelayArchiveEnvVar + " env var not set. Using default: " + newRelayArchivePath)
-		newRelayArchivePath = defaultNewRelayArchive
-	}
+	s3Client := s3.NewFromConfig(sdkConfig)
+	s3ArchiveService, err := dorkly.NewS3RelayArchiveService(s3Client, s3Bucket)
+	reconciler := dorkly.NewReconciler(s3ArchiveService, dorklyYamlInputPath)
 
-	localFileArchiveService := dorkly.NewLocalFileRelayArchiveService("temp/flags.tar.gz")
-	reconciler := dorkly.NewReconciler(localFileArchiveService, dorklyYamlInputPath)
-
-	err := reconciler.Reconcile(context.Background())
+	err = reconciler.Reconcile(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -2,9 +2,11 @@ package dorkly
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"io"
 	"log"
 	"os"
@@ -14,6 +16,10 @@ import (
 
 const (
 	s3ObjectKey = "flags.tar.gz"
+)
+
+var (
+	ErrExistingArchiveNotFound = fmt.Errorf("existing relay archive not found")
 )
 
 type RelayArchiveService interface {
@@ -47,6 +53,10 @@ func (s S3RelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive
 	})
 
 	if err != nil {
+		var nsk *types.NoSuchKey
+		if errors.As(err, &nsk) {
+			return nil, ErrExistingArchiveNotFound
+		}
 		return nil, err
 	}
 
