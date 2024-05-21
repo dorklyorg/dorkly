@@ -28,7 +28,7 @@ type Flag struct {
 	envConfigs map[string]FlagConfigForEnv
 }
 
-func LoadProjectYamlFiles(path string) (*Project, error) {
+func loadProjectYamlFiles(path string) (*Project, error) {
 	if !isDirectory(path) {
 		return nil, fmt.Errorf("path [%s] is not a directory", path)
 	}
@@ -139,8 +139,8 @@ func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (Flag
 	return nil, fmt.Errorf("unsupported flag type [%s] for flag [%s]", p.Flags[flag.key].Type, flag.key)
 }
 
-// ToRelayArchive converts a dorkly Project to a RelayArchive for consumption by ld-relay
-func (p *Project) ToRelayArchive() (*RelayArchive, error) {
+// toRelayArchive converts a dorkly Project to a RelayArchive for consumption by ld-relay
+func (p *Project) toRelayArchive() *RelayArchive {
 	envs := make(map[string]Env)
 	for _, env := range p.Environments {
 		envs[env] = Env{
@@ -169,7 +169,7 @@ func (p *Project) ToRelayArchive() (*RelayArchive, error) {
 			envs[env].data.Flags[flag.key] = flag.envConfigs[env].ToLdFlag(flag.FlagBase)
 		}
 	}
-	return &RelayArchive{envs: envs}, nil
+	return &RelayArchive{envs: envs}
 }
 
 func insecureSdkKey(env string) string {

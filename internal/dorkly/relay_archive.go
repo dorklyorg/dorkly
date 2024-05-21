@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 )
 
 const (
@@ -100,7 +101,19 @@ func (ra *RelayArchive) MarshalArchiveFilesJson() (map[string][]byte, error) {
 
 	return archiveContents, nil
 }
-func (ra *RelayArchive) CreateArchiveFilesAndComputeChecksum(path string) error {
+
+func (ra *RelayArchive) toTarGzFile(pathToArchive string) error {
+	archiveFilesPath := filepath.Join(os.TempDir(), fmt.Sprintf("dorkly-%v", time.Now().UnixNano()))
+	err := ra.createArchiveFilesAndComputeChecksum(archiveFilesPath)
+	if err != nil {
+		return err
+	}
+
+	err = directoryToTarGz(archiveFilesPath, pathToArchive)
+	return err
+}
+
+func (ra *RelayArchive) createArchiveFilesAndComputeChecksum(path string) error {
 	err := ensureEmptyDirExists(path)
 	if err != nil {
 		return err
@@ -138,9 +151,9 @@ func (ra *RelayArchive) CreateArchiveFilesAndComputeChecksum(path string) error 
 	return nil
 }
 
-// DirectoryToTarGz creates a tar.gz archive of the directory at the given path
+// directoryToTarGz creates a tar.gz archive of the directory at the given path
 // We could use the archive/tar package to create the archive, but it's easier to use the tar command
-func DirectoryToTarGz(dir, pathToArchive string) error {
+func directoryToTarGz(dir, pathToArchive string) error {
 	log.Printf("Creating tar.gz archive of directory: %s to %s", dir, pathToArchive)
 	cmd := exec.Command("tar", "-czvf", pathToArchive, "-C", dir, ".")
 
@@ -191,7 +204,7 @@ func addFileToHash(h hash.Hash, file string) error {
 	return err
 }
 
-func LoadRelayArchive(path string) (*RelayArchive, error) {
+func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 	fullPath, err := filepath.Abs(path)
 	if err != nil {
 		return nil, err

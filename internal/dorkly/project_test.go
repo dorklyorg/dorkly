@@ -10,6 +10,7 @@ import (
 var (
 	// This struct is re-used across tests. It is defined here to avoid duplication.
 	// It must be kept in sync with the files in testdata/testProject1 in order for tests to pass.
+	// Consider it the canonical Project.
 	testProject1 = Project{
 		Key:          "testProject1",
 		Description:  "Human-readable description of the project.",
@@ -79,11 +80,11 @@ func Test_LoadProjectYaml(t *testing.T) {
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.want.path = tt.path
-			got, err := LoadProjectYamlFiles(tt.path)
-			if !tt.wantErr(t, err, fmt.Sprintf("LoadProjectYamlFiles(%v)", tt.path)) {
+			got, err := loadProjectYamlFiles(tt.path)
+			if !tt.wantErr(t, err, fmt.Sprintf("loadProjectYamlFiles(%v)", tt.path)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "LoadProjectYamlFiles(%v)", tt.path)
+			assert.Equalf(t, tt.want, got, "loadProjectYamlFiles(%v)", tt.path)
 		})
 	}
 }
@@ -93,10 +94,8 @@ func Test_LoadProjectYaml(t *testing.T) {
 // then check in the resulting changes.
 func Test_ToRelayArchive(t *testing.T) {
 	expectedArchiveFiles := []string{"staging.json", "staging-data.json", "production.json", "production-data.json"}
-	actualRelayArchive, err := testProject1.ToRelayArchive()
-	assert.NoError(t, err)
+	actualRelayArchive := testProject1.toRelayArchive()
 	assert.NotNil(t, actualRelayArchive)
-	assert.NoError(t, err)
 
 	// The actualRelayArchive struct is big and gnarly, so instead of comparing it directly,
 	// we'll marshal it to JSON and compare it to the golden files.

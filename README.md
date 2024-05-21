@@ -12,16 +12,6 @@ Current status: not ready for public consumption. Stay tuned.
 8. Create ld-relay archive of json + checksum files
 9. Save locally (testing) or upload to S3 (production)
 
-### Terraform
-Requirements:
-1. AWS credentials with permissions to create S3 buckets, Lightsail containers, SQS queues, and IAM roles.
-2. Github token with permissions to create repos, secrets, and actions.
-3. Terraform installed on your machine.
-
-To run the terraform you need to have both AWS and Github credentials. Here's an example:
-```bash
-AWS_PROFILE=<aws profile> GITHUB_TOKEN=<github token allowing repo creation etc> terraform apply
-```
 
 ### Go code
 The go code will run in Github Actions so it need to be built for linux. Here's how to update the binary used by terraform:
@@ -33,7 +23,7 @@ GOOS=linux GOARCH=amd64 go build -o ./terraform/files/.github/workflows/dorkly .
 The Dockerfile is used to build the image used in the deployed backend service. It is built on top of the ld-relay image.
 To build and publish it: (requires docker login with permissions to push to drichelson)
 ```bash
-docker build --platform=linux/amd64 -t drichelson/dorkly:latest ./docker/ && docker push drichelson/dorkly:latest
+TAG=0.0.1 docker build --platform=linux/amd64 -t drichelson/dorkly:$TAG ./docker/ && docker push drichelson/dorkly:$TAG
 ```
 
 ### Ideas for later:

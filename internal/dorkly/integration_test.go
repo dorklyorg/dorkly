@@ -101,8 +101,7 @@ func testFlagsForEnv(t *testing.T, ctx context.Context, url, env string) {
 		err = json.Unmarshal(body, &actualFlags)
 		require.Nil(t, err)
 
-		relayArchive, err := testProject1.ToRelayArchive()
-		require.Nil(t, err)
+		relayArchive := testProject1.toRelayArchive()
 		expectedFlags := relayArchive.envs[env].data.Flags
 
 		// We need to set the version to 1 because that's always the first delivered version of a flag

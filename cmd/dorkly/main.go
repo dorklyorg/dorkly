@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/dorklyorg/dorkly/internal/dorkly"
 	"log"
 	"os"
@@ -19,6 +20,7 @@ const (
 )
 
 func main() {
+	//TODO: use a config library to manage these env vars
 	dorklyYamlInputPath := os.Getenv(dorklyYamlEnvVar)
 	if dorklyYamlInputPath == "" {
 		log.Printf(dorklyYamlEnvVar+" env var not set. Using default: %s", defaultDorklyYamlInputPath)
@@ -43,32 +45,10 @@ func main() {
 		newRelayArchivePath = defaultNewRelayArchive
 	}
 
-	proj, err := dorkly.LoadProjectYamlFiles(dorklyYamlInputPath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	localFileArchiveService := dorkly.NewLocalFileRelayArchiveService("temp/flags.tar.gz")
+	reconciler := dorkly.NewReconciler(localFileArchiveService, dorklyYamlInputPath)
 
-	relayArchive, err := proj.ToRelayArchive()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	existingFlags, err := dorkly.LoadRelayArchive(existingRelayArchivePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	reconciledRelayArchive, err := dorkly.Reconcile(*existingFlags, *relayArchive)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = reconciledRelayArchive.CreateArchiveFilesAndComputeChecksum(newRelayArchiveDirPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = dorkly.DirectoryToTarGz(newRelayArchiveDirPath, newRelayArchivePath)
+	err := reconciler.Reconcile(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}

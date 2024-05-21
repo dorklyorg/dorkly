@@ -1,11 +1,44 @@
 package dorkly
 
 import (
+	"context"
 	"log"
 	"reflect"
 )
 
-func Reconcile(old, new RelayArchive) (RelayArchive, error) {
+type Reconciler struct {
+	archiveService  RelayArchiveService
+	projectYamlPath string
+}
+
+func NewReconciler(archiveService RelayArchiveService, projectYamlPath string) *Reconciler {
+	return &Reconciler{
+		archiveService:  archiveService,
+		projectYamlPath: projectYamlPath,
+	}
+}
+
+func (r *Reconciler) Reconcile(ctx context.Context) error {
+	existingArchive, err := r.archiveService.fetchExisting(ctx)
+	if err != nil {
+		return err
+	}
+
+	project, err := loadProjectYamlFiles(r.projectYamlPath)
+	if err != nil {
+		return err
+	}
+
+	newArchive := project.toRelayArchive()
+	reconciledArchive, err := reconcile(*existingArchive, *newArchive)
+	if err != nil {
+		return err
+	}
+
+	return r.archiveService.saveNew(ctx, reconciledArchive)
+}
+
+func reconcile(old, new RelayArchive) (RelayArchive, error) {
 	compareResult := compareMapKeys(old.envs, new.envs)
 	log.Printf("environments: %+v", compareResult)
 

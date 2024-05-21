@@ -73,11 +73,11 @@ func Test_Reconcile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Reconcile(tt.old.RelayArchive, tt.new.RelayArchive)
-			if !tt.wantErr(t, err, fmt.Sprintf("Reconcile(%v, %v)", tt.old.RelayArchive, tt.new.RelayArchive)) {
+			got, err := reconcile(tt.old.RelayArchive, tt.new.RelayArchive)
+			if !tt.wantErr(t, err, fmt.Sprintf("reconcile(%v, %v)", tt.old.RelayArchive, tt.new.RelayArchive)) {
 				return
 			}
-			assert.Equalf(t, tt.expected.RelayArchive, got, "Reconcile(%v, %v)", tt.old.RelayArchive, tt.new.RelayArchive)
+			assert.Equalf(t, tt.expected.RelayArchive, got, "reconcile(%v, %v)", tt.old.RelayArchive, tt.new.RelayArchive)
 		})
 	}
 }
