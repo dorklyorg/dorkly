@@ -15,8 +15,7 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# For now we check in vendor dir for faster CI
-# vendor/
+vendor/
 
 # Go workspace file
 go.work
