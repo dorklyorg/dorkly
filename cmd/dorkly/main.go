@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/dorklyorg/dorkly/internal/dorkly"
 	"log"
 	"os"
@@ -29,13 +31,26 @@ func main() {
 		log.Fatalf("Required env var [%s] not set.", s3BucketEnvVar)
 	}
 
-	sdkConfig, err := config.LoadDefaultConfig(ctx)
+	awsConfig, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		log.Fatalf("Couldn't load default aws configuration. Have you set up your AWS account? %v", err)
 		return
 	}
 
-	s3Client := s3.NewFromConfig(sdkConfig)
+	svc := sts.NewFromConfig(awsConfig)
+	input := &sts.GetCallerIdentityInput{}
+
+	result, err := svc.GetCallerIdentity(ctx, input)
+	if err != nil {
+		log.Fatal(err)
+	}
+	jsonBytes, err := json.Marshal(result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("AWS Identity: %v", string(jsonBytes))
+
+	s3Client := s3.NewFromConfig(awsConfig)
 	s3ArchiveService, err := dorkly.NewS3RelayArchiveService(s3Client, s3Bucket)
 	reconciler := dorkly.NewReconciler(s3ArchiveService, dorklyYamlInputPath)
 

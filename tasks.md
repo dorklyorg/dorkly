@@ -11,7 +11,6 @@
 - [ ] github repo: set up protected branch + pull request process
 - [ ] yaml files: aggressive validation (and run it in PR branches)
 - [ ] Logging: switch to zap or similar
-- [ ] Config: switch to viper or similar
 - [ ] Yaml parsing: smarter handling of DataId field (don't store it as 2 fields)
 
 ## Pending DX tasks
@@ -19,3 +18,4 @@
 
 ## Tasks for later not required for MVP:
 [ ] Create dorkly org in docker hub
+[ ] AWS credentials in GitHub actions: Use suggested approach described here: https://github.com/marketplace/actions/configure-aws-credentials-action-for-github-actions#overview
