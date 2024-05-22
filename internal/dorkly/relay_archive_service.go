@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -44,7 +43,7 @@ func NewS3RelayArchiveService(s3Client *s3.Client, bucket string) (RelayArchiveS
 func (s S3RelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive, error) {
 	existingRelayArchiveFilePath := filepath.Join(os.TempDir(), fmt.Sprintf("dorkly-%v.tar.gz", time.Now().UnixMicro()))
 
-	log.Printf("Fetching existing relay archive from S3 bucket: [%s] with object key: [%s]. Saving to [%s]",
+	logger.Infof("Fetching existing relay archive from S3 bucket: [%s] with object key: [%s]. Saving to [%s]",
 		s.bucket, s3ObjectKey, existingRelayArchiveFilePath)
 
 	goo, err := s.s3Client.GetObject(ctx, &s3.GetObjectInput{
@@ -59,13 +58,13 @@ func (s S3RelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive
 		}
 		return nil, err
 	}
+	defer goo.Body.Close()
 
 	outFile, err := os.Create(existingRelayArchiveFilePath)
 	if err != nil {
 		return nil, err
 	}
 	defer outFile.Close()
-	defer goo.Body.Close()
 
 	_, err = io.Copy(outFile, goo.Body)
 	if err != nil {
@@ -81,7 +80,7 @@ func (s S3RelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive
 func (s S3RelayArchiveService) saveNew(ctx context.Context, relayArchive RelayArchive) error {
 	archiveFilePath := filepath.Join(os.TempDir(), fmt.Sprintf("dorkly-%v.tar.gz", time.Now().UnixMicro()))
 
-	log.Printf("Uploading new relay archive to S3 bucket: [%s] with object key: [%s]. Also saving to [%s]",
+	logger.Infof("Uploading new relay archive to S3 bucket: [%s] with object key: [%s]. Also saving to [%s]",
 		s.bucket, s3ObjectKey, archiveFilePath)
 
 	err := relayArchive.toTarGzFile(archiveFilePath)

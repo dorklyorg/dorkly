@@ -1,10 +1,9 @@
 package dorkly
 
 import (
+	"github.com/go-errors/errors"
 	"github.com/launchdarkly/go-server-sdk-evaluation/v3/ldmodel"
-	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,7 +33,7 @@ func loadProjectYamlFiles(path string) (*Project, error) {
 	}
 
 	projectYmlPath := path + "/project.yml"
-	log.Printf("Loading project config from file [%s]", projectYmlPath)
+	logger.Infof("Loading project config from file [%s]", projectYmlPath)
 	f, err := os.Open(projectYmlPath)
 	if err != nil {
 		return nil, err
@@ -59,7 +58,7 @@ func loadProjectYamlFiles(path string) (*Project, error) {
 
 func (p *Project) loadFlagsYamlFiles() error {
 	flagsPath := filepath.Join(p.path, "flags")
-	log.Printf("Loading flags from path [%s]", flagsPath)
+	logger.Infof("Loading flags from path [%s]", flagsPath)
 	files, err := os.ReadDir(flagsPath)
 	if err != nil {
 		return err
@@ -67,13 +66,13 @@ func (p *Project) loadFlagsYamlFiles() error {
 
 	for _, file := range files {
 		if file.IsDir() {
-			log.Printf("Skipping unexpected directory [%s]", file.Name())
+			logger.Infof("Skipping unexpected directory [%s]", file.Name())
 			continue
 		}
 
 		if strings.HasSuffix(file.Name(), ".yml") {
 			filePath := filepath.Join(flagsPath, file.Name())
-			log.Printf("Loading flag from file [%s]", filePath)
+			logger.Infof("Loading flag from file [%s]", filePath)
 			flag, err := p.loadFlagYamlFile(filePath)
 			if err != nil {
 				return err
@@ -112,7 +111,7 @@ func (p *Project) loadFlagYamlFile(filePath string) (*Flag, error) {
 }
 
 func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (FlagConfigForEnv, error) {
-	log.Printf("Loading environment-specific flag config from file [%s]", filePath)
+	logger.Infof("Loading environment-specific flag config from file [%s]", filePath)
 	f, err := os.Open(filePath)
 	if err != nil {
 		return nil, err

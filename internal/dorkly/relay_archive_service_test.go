@@ -8,12 +8,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/localstack"
-	"log"
 	"path/filepath"
 	"testing"
 )
@@ -30,13 +28,13 @@ func Test_S3RelayArchiveService(t *testing.T) {
 		testcontainers.WithEnv(map[string]string{"SERVICES": "s3"}),
 	)
 	if err != nil {
-		log.Fatalf("failed to start container: %s", err)
+		t.Fatalf("failed to start container: %s", err)
 	}
 
 	// Clean up the container
 	defer func() {
 		if err := localstackContainer.Terminate(ctx); err != nil {
-			log.Fatalf("failed to terminate container: %s", err)
+			t.Fatalf("failed to terminate container: %s", err)
 		}
 	}()
 
@@ -66,7 +64,7 @@ func Test_S3RelayArchiveService(t *testing.T) {
 }
 
 func s3Client(ctx context.Context, l *localstack.LocalStackContainer) (*s3.Client, error) {
-	mappedPort, err := l.MappedPort(ctx, nat.Port("4566/tcp"))
+	mappedPort, err := l.MappedPort(ctx, "4566/tcp")
 	if err != nil {
 		return nil, err
 	}

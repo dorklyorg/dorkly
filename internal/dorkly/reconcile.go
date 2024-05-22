@@ -3,7 +3,6 @@ package dorkly
 import (
 	"context"
 	"errors"
-	"log"
 	"reflect"
 )
 
@@ -23,7 +22,7 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 	existingArchive, err := r.archiveService.fetchExisting(ctx)
 	if err != nil {
 		if errors.Is(err, ErrExistingArchiveNotFound) {
-			log.Println("Existing archive not found. Creating new empty archive.")
+			logger.Warn("Existing archive not found. Creating new empty archive.")
 			existingArchive = &RelayArchive{}
 		} else {
 			return err
@@ -46,7 +45,7 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 
 func reconcile(old, new RelayArchive) (RelayArchive, error) {
 	compareResult := compareMapKeys(old.envs, new.envs)
-	log.Printf("environments: %+v", compareResult)
+	logger.Infof("environments: %+v", compareResult)
 
 	// Process new envs
 	for _, envKey := range compareResult.new {
@@ -79,7 +78,7 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 
 		// compare flags
 		compareResult := compareMapKeys(oldEnv.data.Flags, newEnv.data.Flags)
-		log.Printf("flags: %+v", compareResult)
+		logger.Infof("flags: %+v", compareResult)
 
 		// Process new flags
 		for _, flagKey := range compareResult.new {

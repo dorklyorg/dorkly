@@ -7,11 +7,10 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"github.com/go-errors/errors"
 	"github.com/launchdarkly/go-server-sdk-evaluation/v3/ldmodel"
-	"github.com/pkg/errors"
 	"hash"
 	"io"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -119,7 +118,7 @@ func (ra *RelayArchive) createArchiveFilesAndComputeChecksum(path string) error 
 	if err != nil {
 		return err
 	}
-	log.Println("Creating archive files in path: ", path)
+	logger.Infoln("Creating archive files in path: ", path)
 
 	archiveContents, err := ra.MarshalArchiveFilesJson()
 	if err != nil {
@@ -155,11 +154,11 @@ func (ra *RelayArchive) createArchiveFilesAndComputeChecksum(path string) error 
 // directoryToTarGz creates a tar.gz archive of the directory at the given path
 // We could use the archive/tar package to create the archive, but it's easier to use the tar command
 func directoryToTarGz(dir, pathToArchive string) error {
-	log.Printf("Creating tar.gz archive of directory: %s to %s", dir, pathToArchive)
+	logger.Infof("Creating tar.gz archive of directory: %s to %s", dir, pathToArchive)
 	cmd := exec.Command("tar", "-czvf", pathToArchive, "-C", dir, ".")
 
 	output, err := cmd.CombinedOutput()
-	log.Println(string(output))
+	logger.Infoln(string(output))
 	return err
 }
 
@@ -210,7 +209,7 @@ func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Println("Loading RelayArchive from file:", fullPath)
+	logger.Infoln("Loading RelayArchive from file:", fullPath)
 
 	ad := RelayArchive{envs: make(map[string]Env)}
 
@@ -221,11 +220,11 @@ func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 
 	// iterate over *-data.json files in archive to get each env
 	for name, fileBytes := range archiveContents {
-		log.Println("Processing file:", name)
+		logger.Infoln("Processing file:", name)
 		if strings.HasSuffix(name, "-data.json") {
 			// load flag data
 			envName := strings.TrimSuffix(name, "-data.json")
-			log.Println("Found flag data file for env:", envName)
+			logger.Infoln("Found flag data file for env:", envName)
 			data := RelayArchiveData{}
 			err := json.Unmarshal(fileBytes, &data)
 			if err != nil {
@@ -247,7 +246,7 @@ func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 	}
 
 	// basic validation
-	//log.Println("Performing sanity checks on loaded files...")
+	//logger.Infoln("Performing sanity checks on loaded files...")
 	//if len(ad.envs) == 0 {
 	//	return nil, errors.New((fmt.Sprintf("no envs found in dir: %s", path)
 	//}
