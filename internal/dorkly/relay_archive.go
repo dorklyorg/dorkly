@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/launchdarkly/go-server-sdk-evaluation/v3/ldmodel"
+	"github.com/pkg/errors"
 	"hash"
 	"io"
 	"log"
@@ -177,7 +178,7 @@ func ensureEmptyDirExists(path string) error {
 			return err
 		}
 		if len(files) > 0 {
-			return fmt.Errorf("directory %s is not empty. Refusing to write to non-empty directory", path)
+			return errors.Errorf("directory %s is not empty. Refusing to write to non-empty directory", path)
 		}
 	}
 	return nil
@@ -248,11 +249,11 @@ func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 	// basic validation
 	//log.Println("Performing sanity checks on loaded files...")
 	//if len(ad.envs) == 0 {
-	//	return nil, fmt.Errorf("no envs found in dir: %s", path)
+	//	return nil, errors.New((fmt.Sprintf("no envs found in dir: %s", path)
 	//}
 	//for envName, env := range ad.envs {
 	//	if env.metadata.DataId == "" {
-	//		return nil, fmt.Errorf("env [%s] has no dataId field! Check for well-formed %s.json file", envName, envName)
+	//		return nil, errors.New((fmt.Sprintf("env [%s] has no dataId field! Check for well-formed %s.json file", envName, envName)
 	//	}
 	//}
 

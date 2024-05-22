@@ -19,7 +19,7 @@ const (
 )
 
 var (
-	ErrExistingArchiveNotFound = fmt.Errorf("existing relay archive not found")
+	ErrExistingArchiveNotFound = errors.New("existing relay archive not found")
 )
 
 type RelayArchiveService interface {

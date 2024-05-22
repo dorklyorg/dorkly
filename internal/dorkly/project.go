@@ -1,8 +1,8 @@
 package dorkly
 
 import (
-	"fmt"
 	"github.com/launchdarkly/go-server-sdk-evaluation/v3/ldmodel"
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
@@ -30,7 +30,7 @@ type Flag struct {
 
 func loadProjectYamlFiles(path string) (*Project, error) {
 	if !isDirectory(path) {
-		return nil, fmt.Errorf("path [%s] is not a directory", path)
+		return nil, errors.Errorf("path [%s] is not a directory", path)
 	}
 
 	projectYmlPath := path + "/project.yml"
@@ -136,7 +136,7 @@ func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (Flag
 		}
 		return envData, nil
 	}
-	return nil, fmt.Errorf("unsupported flag type [%s] for flag [%s]", p.Flags[flag.key].Type, flag.key)
+	return nil, errors.Errorf("unsupported flag type [%s] for flag [%s]", p.Flags[flag.key].Type, flag.key)
 }
 
 // toRelayArchive converts a dorkly Project to a RelayArchive for consumption by ld-relay
