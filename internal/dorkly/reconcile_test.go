@@ -83,7 +83,6 @@ func Test_Reconcile(t *testing.T) {
 }
 
 type relayArchiveBuilder struct {
-	projKey string
 	RelayArchive
 }
 
@@ -91,11 +90,6 @@ func relayArchive() relayArchiveBuilder {
 	return relayArchiveBuilder{
 		RelayArchive: RelayArchive{map[string]Env{}},
 	}
-}
-
-func (b relayArchiveBuilder) projectKey(projectKey string) relayArchiveBuilder {
-	b.projKey = projectKey
-	return b
 }
 
 func (b relayArchiveBuilder) env(envBuilder envBuilder) relayArchiveBuilder {

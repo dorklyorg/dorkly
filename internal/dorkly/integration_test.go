@@ -105,7 +105,7 @@ func testFlagsForEnv(t *testing.T, ctx context.Context, url, env string) {
 		expectedFlags := relayArchive.envs[env].data.Flags
 
 		// We need to set the version to 1 because that's always the first delivered version of a flag
-		for key, _ := range expectedFlags {
+		for key := range expectedFlags {
 			f := expectedFlags[key]
 			f.Version = 1
 			expectedFlags[key] = f

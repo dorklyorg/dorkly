@@ -52,6 +52,9 @@ func main() {
 
 	s3Client := s3.NewFromConfig(awsConfig)
 	s3ArchiveService, err := dorkly.NewS3RelayArchiveService(s3Client, s3Bucket)
+	if err != nil {
+		log.Fatal(err)
+	}
 	reconciler := dorkly.NewReconciler(s3ArchiveService, dorklyYamlInputPath)
 
 	err = reconciler.Reconcile(context.Background())

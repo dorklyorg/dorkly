@@ -130,7 +130,7 @@ func compareMapKeys[T any](old, new map[string]T) compareResult {
 	deletedKeys, newKeys, existingKeys := make([]string, 0), make([]string, 0), make([]string, 0)
 
 	// check for existing/deleted keys
-	for key, _ := range old {
+	for key := range old {
 		_, ok := new[key]
 		if ok {
 			existingKeys = append(existingKeys, key)
@@ -140,7 +140,7 @@ func compareMapKeys[T any](old, new map[string]T) compareResult {
 	}
 
 	// check for new keys
-	for key, _ := range new {
+	for key := range new {
 		_, ok := old[key]
 		if !ok {
 			newKeys = append(newKeys, key)
