@@ -6,17 +6,20 @@ import (
 	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
 // Project is the dorkly representation of a LaunchDarkly project
 type Project struct {
-	Key          string          `yaml:"key"`
-	Description  string          `yaml:"description"`
-	Environments []string        `yaml:"environments"`
-	Flags        map[string]Flag `yaml:"flags"`
+	// Name is reused as key
+	Name string `yaml:"name"`
 
-	path string
+	Description string          `yaml:"description"`
+	Flags       map[string]Flag `yaml:"flags"`
+
+	path         string
+	environments []string
 }
 
 // Flag contains everything needed to serve a flag for all environments in a project
@@ -47,6 +50,12 @@ func loadProjectYamlFiles(path string) (*Project, error) {
 		return nil, err
 	}
 	project.path = path
+
+	err = project.loadEnvironmentNames()
+	if err != nil {
+		return nil, err
+	}
+
 	project.Flags = make(map[string]Flag)
 	err = project.loadFlagsYamlFiles()
 	if err != nil {
@@ -100,7 +109,7 @@ func (p *Project) loadFlagYamlFile(filePath string) (*Flag, error) {
 	flag := Flag{FlagBase: flagBase}
 	flag.key = getFileNameNoSuffix(f.Name())
 	flag.envConfigs = make(map[string]FlagConfigForEnv)
-	for _, env := range p.Environments {
+	for _, env := range p.environments {
 		flag.envConfigs[env], err = p.loadFlagConfigForEnvYamlFile(flag, filepath.Join(p.path, "environments", env, flag.key+".yml"))
 		if err != nil {
 			return nil, err
@@ -108,6 +117,24 @@ func (p *Project) loadFlagYamlFile(filePath string) (*Flag, error) {
 	}
 
 	return &flag, nil
+}
+
+func (p *Project) loadEnvironmentNames() error {
+	envPath := filepath.Join(p.path, "environments")
+	logger.Infof("Loading environments from path [%s]", envPath)
+	files, err := os.ReadDir(envPath)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			logger.Infof("Adding environment [%s]", file.Name())
+			p.environments = append(p.environments, file.Name())
+		}
+	}
+	sort.Strings(p.environments)
+	return nil
 }
 
 func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (FlagConfigForEnv, error) {
@@ -141,7 +168,7 @@ func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (Flag
 // toRelayArchive converts a dorkly Project to a RelayArchive for consumption by ld-relay
 func (p *Project) toRelayArchive() *RelayArchive {
 	envs := make(map[string]Env)
-	for _, env := range p.Environments {
+	for _, env := range p.environments {
 		envs[env] = Env{
 			metadata: RelayArchiveEnv{
 				EnvMetadata: RelayArchiveEnvMetadata{
@@ -149,8 +176,8 @@ func (p *Project) toRelayArchive() *RelayArchive {
 					EnvKey:   env,
 					EnvName:  env,
 					MobKey:   insecureMobileKey(env), //TODO: load from env var?
-					ProjKey:  p.Key,
-					ProjName: p.Key,
+					ProjKey:  p.Name,
+					ProjName: p.Name,
 					SDKKey: SDKKeyRep{
 						Value: insecureSdkKey(env), //TODO: load from env var?
 					},

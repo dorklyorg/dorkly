@@ -12,9 +12,9 @@ var (
 	// It must be kept in sync with the files in testdata/testProject1 in order for tests to pass.
 	// Consider it the canonical Project.
 	testProject1 = Project{
-		Key:          "testProject1",
+		Name:         "testProject1",
 		Description:  "Human-readable description of the project.",
-		Environments: []string{"staging", "production"},
+		environments: []string{"production", "staging"},
 		Flags: map[string]Flag{
 			"boolean1": {
 				FlagBase: FlagBase{

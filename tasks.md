@@ -1,9 +1,12 @@
 ## Pending feature tasks for the project
+- [x] project.yml file: remove environments field and instead read in directories in environments folder
+- [x] project.yml file: change key to name
 - [x] Create terraform module in separate repo with example
-- [x] Do all S3 stuff in go code. (with option for local mode testing)
+- [x] Do all S stuff in go code. (with option for local mode testing)
 - [x] Logging: switch to zap or similar
 - [x] Logging: more descriptive log messages + clear indication of steps.
-- [ ] Secrets management.. including technique for creating envs + their secrets.
+- [x] Secrets: terraform: generate and store in aws secrets manager
+- [ ] Secrets: dorkly go code: read from aws secrets manager
 - [x] Use localstack to test s3
 - [ ] Use localstack to do end to end testing (if possible)
 - [ ] Create project overview in README.md
@@ -11,7 +14,11 @@
 - [ ] github repo: better default description
 - [ ] github readme: link to docs
 - [ ] github repo: set up protected branch + pull request process
-- [ ] yaml files: aggressive validation (and run it in PR branches)
+- [ ] yaml files validation: warn if flag is defined in the project but not an environment
+- [ ] yaml files validation: error if flag is defined in an environment but not in the project
+- [ ] yaml files validation: error if env flag type does not match project flag type (ie 'true' for a rollout flag)
+- [ ] terraform: validate variables (see TODOs in https://github.com/dorklyorg/terraform-aws-dorkly-flags/blob/main/variables.tf)
+- 
 
 
 ## Pending DX tasks

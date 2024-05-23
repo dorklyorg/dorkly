@@ -1,6 +1,3 @@
-key: testProject1
+name: testProject1
 description: Human-readable description of the project.
-environments:
-  - staging
-  - production
 
