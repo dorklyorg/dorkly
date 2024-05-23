@@ -1,5 +1,5 @@
 #!/bin/sh
-set -uxe
+set -ue
 
 echo "$(date) Listening for messages on $SQS_QUEUE_URL"
 while true; do

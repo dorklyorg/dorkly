@@ -158,7 +158,7 @@ func directoryToTarGz(dir, pathToArchive string) error {
 	cmd := exec.Command("tar", "-czvf", pathToArchive, "-C", dir, ".")
 
 	output, err := cmd.CombinedOutput()
-	logger.Infoln(string(output))
+	logger.Infoln("tar command output: \n" + string(output))
 	return err
 }
 

@@ -1,7 +1,8 @@
 ## Pending feature tasks for the project
 - [x] Create terraform module in separate repo with example
 - [x] Do all S3 stuff in go code. (with option for local mode testing)
-- [ ] Logging: switch to zap or similar
+- [x] Logging: switch to zap or similar
+- [x] Logging: more descriptive log messages + clear indication of steps.
 - [ ] Secrets management.. including technique for creating envs + their secrets.
 - [x] Use localstack to test s3
 - [ ] Use localstack to do end to end testing (if possible)
