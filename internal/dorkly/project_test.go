@@ -99,7 +99,7 @@ func Test_ToRelayArchive(t *testing.T) {
 
 	// The actualRelayArchive struct is big and gnarly, so instead of comparing it directly,
 	// we'll marshal it to JSON and compare it to the golden files.
-	actualArchiveFiles, err := actualRelayArchive.MarshalArchiveFilesJson()
+	actualArchiveFiles, err := actualRelayArchive.marshalArchiveFilesJson()
 	assert.NoError(t, err)
 	assert.Len(t, actualArchiveFiles, len(expectedArchiveFiles))
 

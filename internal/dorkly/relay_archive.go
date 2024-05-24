@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"context"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
@@ -79,8 +80,28 @@ type RelayArchiveData struct {
 	Flags    map[string]ldmodel.FeatureFlag `json:"flags"`
 }
 
-// MarshalArchiveFilesJson returns a map of relay archive filenames to their json bytes
-func (ra *RelayArchive) MarshalArchiveFilesJson() (map[string][]byte, error) {
+func (ra *RelayArchive) injectSecrets(secretsService SecretsService) error {
+	ctx := context.Background()
+	for _, env := range ra.envs {
+		sdkKey, err := secretsService.getSdkKey(ctx, env.metadata.EnvMetadata.ProjKey, env.metadata.EnvMetadata.EnvName)
+		if err != nil {
+			return err
+		}
+		env.metadata.EnvMetadata.SDKKey.Value = sdkKey
+
+		mobKey, err := secretsService.getMobileKey(ctx, env.metadata.EnvMetadata.ProjKey, env.metadata.EnvMetadata.EnvName)
+		if err != nil {
+			return err
+		}
+		env.metadata.EnvMetadata.MobKey = mobKey
+
+		ra.envs[env.metadata.EnvMetadata.EnvName] = env
+	}
+	return nil
+}
+
+// marshalArchiveFilesJson returns a map of relay archive filenames to their json bytes
+func (ra *RelayArchive) marshalArchiveFilesJson() (map[string][]byte, error) {
 	archiveContents := make(map[string][]byte)
 
 	for envName, env := range ra.envs {
@@ -120,7 +141,7 @@ func (ra *RelayArchive) createArchiveFilesAndComputeChecksum(path string) error 
 	}
 	logger.Infoln("Creating archive files in path: ", path)
 
-	archiveContents, err := ra.MarshalArchiveFilesJson()
+	archiveContents, err := ra.marshalArchiveFilesJson()
 	if err != nil {
 		return err
 	}

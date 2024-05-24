@@ -39,6 +39,8 @@ func main() {
 		return
 	}
 
+	secretsService := dorkly.NewAwsSecretsService(awsConfig)
+
 	logAwsCallerIdentity(awsConfig, ctx)
 
 	s3Client := s3.NewFromConfig(awsConfig)
@@ -46,9 +48,9 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	reconciler := dorkly.NewReconciler(s3ArchiveService, dorklyYamlInputPath)
+	reconciler := dorkly.NewReconciler(s3ArchiveService, secretsService, dorklyYamlInputPath)
 
-	err = reconciler.Reconcile(context.Background())
+	err = reconciler.Reconcile(ctx)
 	if err != nil {
 		logger.Fatal(err)
 	}

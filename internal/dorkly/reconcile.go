@@ -8,12 +8,14 @@ import (
 
 type Reconciler struct {
 	archiveService  RelayArchiveService
+	secretsService  SecretsService
 	projectYamlPath string
 }
 
-func NewReconciler(archiveService RelayArchiveService, projectYamlPath string) *Reconciler {
+func NewReconciler(archiveService RelayArchiveService, secretsService SecretsService, projectYamlPath string) *Reconciler {
 	return &Reconciler{
 		archiveService:  archiveService,
+		secretsService:  secretsService,
 		projectYamlPath: projectYamlPath,
 	}
 }
@@ -35,6 +37,11 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 	}
 
 	newArchive := project.toRelayArchive()
+	err = newArchive.injectSecrets(r.secretsService)
+	if err != nil {
+		return err
+	}
+
 	reconciledArchive, err := reconcile(*existingArchive, *newArchive)
 	if err != nil {
 		return err
