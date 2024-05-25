@@ -1,6 +1,3 @@
-# dorkly
-Current status: not ready for public consumption. Stay tuned.
-
 # Project Description
 Open Source Feature Flag system.
 Dorkly is a git-based open-source feature flag backend for [LaunchDarkly](https://launchdarkly.com/features/feature-flags/) SDKs.
@@ -13,9 +10,9 @@ It consists of:
 
 # Getting Started: One time setup
 ## First steps
-1. Determine your project scope and come up with a short name. [Helpful doc](https://docs.launchdarkly.com/home/getting-started/vocabulary#project)
-2. Determine your starting environments. These can be changed later so it's ok to use the defaults. [Helpful doc](https://docs.launchdarkly.com/home/getting-started/vocabulary#environment)
-3. Provision your infrastructure using the [Terraform module](https://registry.terraform.io/modules/dorklyorg/dorkly-flags/aws/latest). [Example](https://github.com/dorklyorg/terraform-aws-dorkly-flags/blob/main/examples/main/main.tf)
+1. Determine your [project](https://docs.launchdarkly.com/home/getting-started/vocabulary#project) scope and come up with a short name.
+2. Determine your starting [environments](https://docs.launchdarkly.com/home/getting-started/vocabulary#environment). These can be changed later so it's ok to use the defaults.
+3. Provision your infrastructure using the [dorkly-flags Terraform module](https://registry.terraform.io/modules/dorklyorg/dorkly-flags/aws/latest). [Example](https://github.com/dorklyorg/terraform-aws-dorkly-flags/blob/main/examples/main/main.tf)
 
 ## Setting up your application with a properly configured LaunchDarkly SDK: Server-side (golang example)
 TODO: terraform: autogenerate example snippets including the sdk key and backend service url instead of this manual process.
@@ -26,6 +23,11 @@ TODO: terraform: autogenerate example snippets including the sdk key and backend
 5. *Not yet implemented but needed for MVP*: Grab the backend service url from the GitHub repo's readme/other file tbd. You'll use it in the next step.
 6. Instead of initializing a default client, initialize a client with the url of the backend service:
 ```golang
+    import (
+"github.com/launchdarkly/go-server-sdk/v7"
+"github.com/launchdarkly/go-server-sdk/v7/ldcomponents"
+
+)
 	dorklyConfig := ld.Config{
 		ServiceEndpoints: ldcomponents.RelayProxyEndpoints("<YOUR_DORKLY_URL>"),
 		Events:           ldcomponents.NoEvents(),
@@ -61,6 +63,10 @@ In your newly created GitHub repo you'll notice some example yaml files under th
 7. Create checksum of json files
 8. Create ld-relay archive of json + checksum files
 9. Save locally (testing) or upload to S3 (production)
+
+## Relevant Links
+[Feature Flags](https://launchdarkly.com/features/feature-flags/)
+[Relay Proxy Configuration](https://docs.launchdarkly.com/sdk/features/relay-proxy-configuration/proxy-mode)
 
 
 ### Go code
