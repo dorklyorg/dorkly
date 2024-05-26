@@ -124,7 +124,7 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 
 		// compare flags
 		compareResult := compareMapKeys(oldEnv.data.Flags, newEnv.data.Flags)
-		logger.Infof("flags: %+v", compareResult)
+		logger.With("env", envKey).Infof("flags: %+v", compareResult)
 
 		// Process new flags
 		for _, flagKey := range compareResult.new {
@@ -164,6 +164,8 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 		}
 
 		if shouldChangeDataId {
+			logger.With("env", envKey).
+				Infof("Found changes in this environment. Incrementing dataId: %d->%d", newEnv.metadata.dataId, newEnv.metadata.dataId+1)
 			newEnv.metadata.incrementDataId()
 		}
 		new.envs[envKey] = newEnv
