@@ -148,8 +148,9 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 			newFlag := newEnv.data.Flags[flagKey]
 			newFlag.Version = oldFlag.Version
 			if !reflect.DeepEqual(oldFlag, newFlag) {
-				logger.With("env", envKey).With("flag", flagKey).Info("Found modified flag")
 				newFlag.Version++
+				logger.With("env", envKey).With("flag", flagKey).
+					Infof("Found modified flag. Version %d->%d", oldFlag.Version, newFlag.Version)
 				newEnv.data.Flags[flagKey] = newFlag
 				shouldChangeDataId = true
 			}
