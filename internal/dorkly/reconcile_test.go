@@ -21,8 +21,8 @@ func Test_Reconcile(t *testing.T) {
 				env(env("staging").version(1).dataId(1).
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			new: relayArchive().
-				env(env("staging").version(1).dataId(1).
-					flag(booleanFlag("flag1").variation(false).version(1))),
+				env(env("staging").
+					flag(booleanFlag("flag1").variation(false))),
 			expected: relayArchive().
 				env(env("staging").version(1).dataId(1).
 					flag(booleanFlag("flag1").variation(false).version(1))),
@@ -34,8 +34,8 @@ func Test_Reconcile(t *testing.T) {
 				env(env("staging").version(1).dataId(1).
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			new: relayArchive().
-				env(env("staging").version(1).dataId(1).
-					flag(booleanFlag("flag1").variation(true).version(1))),
+				env(env("staging").
+					flag(booleanFlag("flag1").variation(true))),
 			expected: relayArchive().
 				env(env("staging").version(1).dataId(2).
 					flag(booleanFlag("flag1").variation(true).version(2))),
@@ -47,9 +47,9 @@ func Test_Reconcile(t *testing.T) {
 				env(env("staging").version(1).dataId(1).
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			new: relayArchive().
-				env(env("staging").version(1).dataId(1).
-					flag(booleanFlag("flag1").variation(false).version(1)).
-					flag(booleanFlag("flag2").variation(true).version(1)),
+				env(env("staging").
+					flag(booleanFlag("flag1").variation(false)).
+					flag(booleanFlag("flag2").variation(true)),
 				),
 			expected: relayArchive().
 				env(env("staging").version(1).dataId(2).
@@ -64,7 +64,7 @@ func Test_Reconcile(t *testing.T) {
 				env(env("staging").version(1).dataId(1).
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			new: relayArchive().
-				env(env("staging").version(1).dataId(1)),
+				env(env("staging").version(1)),
 			expected: relayArchive().
 				env(env("staging").version(1).dataId(2).
 					flag(booleanFlag("flag1").variation(false).version(2).deleted(true))),
