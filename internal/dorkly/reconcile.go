@@ -38,11 +38,10 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 			if errors.Is(err, ErrExistingArchiveNotFound) {
 				r.logger.Warn("Existing archive not found. Creating new empty archive.")
 				existingArchive = &RelayArchive{}
-			} else {
-				return err
+				return nil
 			}
 		}
-		return nil
+		return err
 	})
 	if err != nil {
 		return err
@@ -159,7 +158,7 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 // https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
 func runStep(step string, f func() error) error {
 	//fmt.Printf("\n[%s] BEGIN\n", step)
-	fmt.Printf("::group::{%s}\n", step)
+	fmt.Printf("::group::%s\n", step)
 	err := f()
 	//if err != nil {
 	//	fmt.Printf("[%s] ERROR: %v\n", step, err)
