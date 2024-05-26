@@ -3,7 +3,6 @@ package dorkly
 import (
 	"context"
 	"errors"
-	"fmt"
 	"go.uber.org/zap"
 	"reflect"
 )
@@ -158,14 +157,14 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 // https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
 func runStep(step string, f func() error) error {
 	//fmt.Printf("\n[%s] BEGIN\n", step)
-	fmt.Printf("::group::%s\n", step)
+	logger.Infof("\n::group::%s", step)
 	logger.Infof("Starting step: %s", step)
 	err := f()
 	//if err != nil {
 	//	fmt.Printf("[%s] ERROR: %v\n", step, err)
 	//}
 	logger.Infof("Ending step: %s", step)
-	fmt.Printf("::endgroup::\n")
+	logger.Infof("\n::endgroup::")
 	//fmt.Printf("[%s] END\n", step)
 	return err
 }
