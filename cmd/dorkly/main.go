@@ -24,7 +24,7 @@ func main() {
 	ctx := context.Background()
 	dorklyYamlInputPath := os.Getenv(dorklyYamlEnvVar)
 	if dorklyYamlInputPath == "" {
-		logger.Infof("Env var [%s] not set. Using default: %s", dorklyYamlEnvVar, defaultDorklyYamlInputPath)
+		logger.Debugf("Env var [%s] not set. Using default: %s", dorklyYamlEnvVar, defaultDorklyYamlInputPath)
 		dorklyYamlInputPath = defaultDorklyYamlInputPath
 	}
 
@@ -68,5 +68,5 @@ func logAwsCallerIdentity(awsConfig aws.Config, ctx context.Context) {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	logger.Infof("AWS Identity: %v", string(jsonBytes))
+	logger.Debugf("AWS Identity: %v", string(jsonBytes))
 }

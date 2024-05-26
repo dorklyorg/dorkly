@@ -62,7 +62,7 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 	}
 
 	var reconciledArchive RelayArchive
-	err = runStep("Reconcile existing archive and local yaml project files into reconciled archive", func() error {
+	err = runStep("Merge existing archive and local yaml project files into reconciled archive", func() error {
 		var err error
 		reconciledArchive, err = reconcile(*existingArchive, *newArchive)
 		return err
@@ -155,8 +155,12 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 
 // runStep utilizes GitHub Actions' log grouping feature:
 // https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
+// Ideally these would be collapsed by default, but that's not possible with the current implementation:
+// https://www.google.com/search?q=github+grouping+log+lines+collapse+by+default
 func runStep(step string, f func() error) error {
 	//fmt.Printf("\n[%s] BEGIN\n", step)
+	// For now we use the logger because it is the only way to guarantee that the log lines are grouped:
+	// fmt.Printf() produces out of order log lines causing malformed groups.
 	logger.Infof("\n::group::%s", step)
 	logger.Infof("Starting step: %s", step)
 	err := f()

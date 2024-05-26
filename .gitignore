@@ -39,3 +39,6 @@ temp/
 # example: *tfplan*
 
 # Ignore CLI configuration files!/temp/
+
+
+dorkly.log
