@@ -312,6 +312,7 @@ func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 	//	}
 	//}
 
+	logger.Infof("Existing archive: %v", ad.String())
 	return &ad, nil
 
 }
@@ -337,28 +338,31 @@ func readTarGz(srcFile string) (map[string][]byte, error) {
 	for {
 		header, err := tr.Next()
 		if err == io.EOF {
-			break // End of archive
+			break // End of archive or root directory
 		}
 		if err != nil {
 			return nil, err
+		}
+
+		filename := filepath.Base(header.Name)
+		if filename == "." {
+			continue
 		}
 		var buf bytes.Buffer
 		if _, err := io.Copy(&buf, tr); err != nil {
 			return nil, err
 		}
 		// We expect all files to be in the root directory of the archive so we strip out the leading ./ from the filename
-		contents[filepath.Base(header.Name)] = buf.Bytes()
+		contents[filename] = buf.Bytes()
 	}
 
 	filenames := make([]string, 0, len(contents))
 	for filename := range contents {
-		if filename != "." {
-			filenames = append(filenames, filename)
-		}
+		filenames = append(filenames, filename)
 	}
 	sort.Strings(filenames)
 
-	l.With("contents", filenames).Infof("Found %d files in archive", len(contents))
+	l.With("contents", filenames).Infof("Found %d files in archive", len(filenames))
 
 	return contents, nil
 }

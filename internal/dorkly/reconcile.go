@@ -54,8 +54,8 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 		}
 
 		newArchive = project.toRelayArchive()
-		err = newArchive.injectSecrets(r.secretsService)
-		return err
+		logger.Infof("Local yaml project: %v", newArchive.String())
+		return newArchive.injectSecrets(r.secretsService)
 	})
 	if err != nil {
 		return err
@@ -65,6 +65,7 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 	err = runStep("Merge existing archive and local yaml project files into reconciled archive", func() error {
 		var err error
 		reconciledArchive, err = reconcile(*existingArchive, *newArchive)
+		logger.Infof("Merged archive for upload: %v", reconciledArchive.String())
 		return err
 	})
 	if err != nil {
@@ -84,6 +85,7 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 
 	// Process new envs
 	for _, envKey := range compareResult.new {
+		logger.With("env", envKey).Info("New environment found")
 		//set all versions to 1
 		newEnv := new.envs[envKey]
 		newEnv.metadata.EnvMetadata.Version = 1
@@ -96,9 +98,13 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 	}
 
 	// TODO: Process deleted envs.. wtf.
+	for _, envKey := range compareResult.deleted {
+		logger.With("env", envKey).Error("Deleted environment found. Doing nothing for now...")
+	}
 
 	// Process existing envs
 	for _, envKey := range compareResult.existing {
+		logger.With("env", envKey).Info("Existing environment found")
 		shouldChangeDataId := false
 		// compare env metadata:
 		oldEnv := old.envs[envKey]
@@ -107,6 +113,7 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 		// compare env metadata ignoring versions
 		newEnv.metadata.EnvMetadata.Version = oldEnv.metadata.EnvMetadata.Version
 		if !reflect.DeepEqual(oldEnv.metadata, newEnv.metadata) {
+			logger.With("env", envKey).Info("Environment metadata changed.")
 			newEnv.metadata.EnvMetadata.Version++
 			shouldChangeDataId = true
 		}
@@ -117,6 +124,7 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 
 		// Process new flags
 		for _, flagKey := range compareResult.new {
+			logger.With("env", envKey).With("flag", flagKey).Info("Found new flag")
 			flag := newEnv.data.Flags[flagKey]
 			flag.Version = 1
 			newEnv.data.Flags[flagKey] = flag
@@ -125,6 +133,7 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 
 		// Process deleted flags
 		for _, flagKey := range compareResult.deleted {
+			logger.With("env", envKey).With("flag", flagKey).Info("Found deleted flag")
 			deletedFlag := oldEnv.data.Flags[flagKey]
 			deletedFlag.Version++
 			deletedFlag.Deleted = true
@@ -139,6 +148,7 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 			newFlag := newEnv.data.Flags[flagKey]
 			newFlag.Version = oldFlag.Version
 			if !reflect.DeepEqual(oldFlag, newFlag) {
+				logger.With("env", envKey).With("flag", flagKey).Info("Found modified flag")
 				newFlag.Version++
 				newEnv.data.Flags[flagKey] = newFlag
 				shouldChangeDataId = true
