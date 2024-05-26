@@ -159,10 +159,12 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 func runStep(step string, f func() error) error {
 	//fmt.Printf("\n[%s] BEGIN\n", step)
 	fmt.Printf("::group::%s\n", step)
+	logger.Infof("Starting step: %s", step)
 	err := f()
 	//if err != nil {
 	//	fmt.Printf("[%s] ERROR: %v\n", step, err)
 	//}
+	logger.Infof("Ending step: %s", step)
 	fmt.Printf("::endgroup::\n")
 	//fmt.Printf("[%s] END\n", step)
 	return err
