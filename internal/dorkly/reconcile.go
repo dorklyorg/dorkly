@@ -3,6 +3,8 @@ package dorkly
 import (
 	"context"
 	"errors"
+	"fmt"
+	"go.uber.org/zap"
 	"reflect"
 )
 
@@ -10,6 +12,7 @@ type Reconciler struct {
 	archiveService  RelayArchiveService
 	secretsService  SecretsService
 	projectYamlPath string
+	logger          *zap.SugaredLogger
 }
 
 func NewReconciler(archiveService RelayArchiveService, secretsService SecretsService, projectYamlPath string) *Reconciler {
@@ -17,37 +20,64 @@ func NewReconciler(archiveService RelayArchiveService, secretsService SecretsSer
 		archiveService:  archiveService,
 		secretsService:  secretsService,
 		projectYamlPath: projectYamlPath,
+		logger:          logger.Named("Reconciler"),
 	}
 }
 
 func (r *Reconciler) Reconcile(ctx context.Context) error {
-	existingArchive, err := r.archiveService.fetchExisting(ctx)
+	r.logger.
+		With("archiveService", r.archiveService).
+		With("secretsService", r.secretsService).
+		Info("Begin Reconcile")
+
+	var existingArchive *RelayArchive
+	err := runStep("Fetch existing archive", func() error {
+		var err error
+		existingArchive, err = r.archiveService.fetchExisting(ctx)
+		if err != nil {
+			if errors.Is(err, ErrExistingArchiveNotFound) {
+				r.logger.Warn("Existing archive not found. Creating new empty archive.")
+				existingArchive = &RelayArchive{}
+			} else {
+				return err
+			}
+		}
+		return nil
+	})
 	if err != nil {
-		if errors.Is(err, ErrExistingArchiveNotFound) {
-			logger.Warn("Existing archive not found. Creating new empty archive.")
-			existingArchive = &RelayArchive{}
-		} else {
+		return err
+	}
+
+	var newArchive *RelayArchive
+	err = runStep("Load local yaml project files", func() error {
+		project, err := loadProjectYamlFiles(r.projectYamlPath)
+		if err != nil {
 			return err
 		}
-	}
 
-	project, err := loadProjectYamlFiles(r.projectYamlPath)
+		newArchive = project.toRelayArchive()
+		err = newArchive.injectSecrets(r.secretsService)
+		return err
+	})
 	if err != nil {
 		return err
 	}
 
-	newArchive := project.toRelayArchive()
-	err = newArchive.injectSecrets(r.secretsService)
+	var reconciledArchive RelayArchive
+	err = runStep("Reconcile existing archive and local yaml project files into reconciled archive", func() error {
+		var err error
+		reconciledArchive, err = reconcile(*existingArchive, *newArchive)
+		return err
+	})
 	if err != nil {
 		return err
 	}
 
-	reconciledArchive, err := reconcile(*existingArchive, *newArchive)
-	if err != nil {
-		return err
-	}
+	err = runStep("Publish reconciled archive", func() error {
+		return r.archiveService.saveNew(ctx, reconciledArchive)
+	})
 
-	return r.archiveService.saveNew(ctx, reconciledArchive)
+	return err
 }
 
 func reconcile(old, new RelayArchive) (RelayArchive, error) {
@@ -123,6 +153,20 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 		new.envs[envKey] = newEnv
 	}
 	return new, nil
+}
+
+// runStep utilizes GitHub Actions' log grouping feature:
+// https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
+func runStep(step string, f func() error) error {
+	//fmt.Printf("\n[%s] BEGIN\n", step)
+	fmt.Printf("::group::{%s}\n", step)
+	err := f()
+	//if err != nil {
+	//	fmt.Printf("[%s] ERROR: %v\n", step, err)
+	//}
+	fmt.Printf("::endgroup::\n")
+	//fmt.Printf("[%s] END\n", step)
+	return err
 }
 
 type compareResult struct {

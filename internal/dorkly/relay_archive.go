@@ -29,10 +29,24 @@ type RelayArchive struct {
 	envs map[string]Env
 }
 
+func (ra *RelayArchive) String() string {
+	envStrings := make([]string, 0, len(ra.envs))
+	for _, env := range ra.envs {
+		envStrings = append(envStrings, env.String())
+	}
+
+	return fmt.Sprintf("Environments: %v", strings.Join(envStrings, ", "))
+}
+
 // Env is a representation of the <env>.json and <env>-data.json files in the relay archive
 type Env struct {
 	metadata RelayArchiveEnv
 	data     RelayArchiveData
+}
+
+func (e *Env) String() string {
+	return fmt.Sprintf("(Name: %v, Version: %d, DataID: %v, Data: %v)",
+		e.metadata.EnvMetadata.EnvName, e.metadata.EnvMetadata.Version, e.metadata.DataId, e.data.String())
 }
 
 // RelayArchiveEnv is a representation of the <env>.json file in the relay archive
@@ -45,6 +59,10 @@ type RelayArchiveEnv struct {
 
 	// internal representation of dataId
 	dataId int
+}
+
+func (a *RelayArchiveEnv) String() string {
+	return fmt.Sprintf("Env: %v, DataId: %v", a.EnvMetadata.String(), a.DataId)
 }
 
 func (a *RelayArchiveEnv) incrementDataId() {
@@ -70,6 +88,10 @@ type RelayArchiveEnvMetadata struct {
 	Version    int       `json:"version"`
 }
 
+func (r *RelayArchiveEnvMetadata) String() string {
+	return fmt.Sprintf("EnvName: %v, ProjName: %s, Version: %v", r.EnvName, r.ProjName, r.Version)
+}
+
 type SDKKeyRep struct {
 	Value string `json:"value"`
 }
@@ -78,6 +100,10 @@ type SDKKeyRep struct {
 type RelayArchiveData struct {
 	Segments map[string]ldmodel.Segment     `json:"segments"`
 	Flags    map[string]ldmodel.FeatureFlag `json:"flags"`
+}
+
+func (rad *RelayArchiveData) String() string {
+	return fmt.Sprintf("Flag count: %d", len(rad.Flags))
 }
 
 func (ra *RelayArchive) injectSecrets(secretsService SecretsService) error {
@@ -241,11 +267,14 @@ func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 
 	// iterate over *-data.json files in archive to get each env
 	for name, fileBytes := range archiveContents {
-		logger.Infoln("Processing file:", name)
+		if name == "." {
+			continue
+		}
+		logger.With("file", name).Debugln("Processing file...")
 		if strings.HasSuffix(name, "-data.json") {
 			// load flag data
 			envName := strings.TrimSuffix(name, "-data.json")
-			logger.Infoln("Found flag data file for env:", envName)
+			logger.With("file", name).With("env", envName).Infof("Found data file for env")
 			data := RelayArchiveData{}
 			err := json.Unmarshal(fileBytes, &data)
 			if err != nil {
@@ -254,9 +283,15 @@ func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 
 			// load env metadata
 			envMetadata := RelayArchiveEnv{}
-			err = json.Unmarshal(archiveContents[envName+".json"], &envMetadata)
-			if err != nil {
-				return nil, err
+			envMetadataFileName := envName + ".json"
+			if envBytes, ok := archiveContents[envMetadataFileName]; ok {
+				logger.With("file", envMetadataFileName).With("env", envName).Infof("Found metadata file for env")
+				err = json.Unmarshal(envBytes, &envMetadata)
+				if err != nil {
+					return nil, err
+				}
+			} else {
+				return nil, errors.Errorf("missing metadata file for env: %s", envName)
 			}
 
 			ad.envs[envName] = Env{
@@ -282,6 +317,7 @@ func loadRelayArchiveFromTarGzFile(path string) (*RelayArchive, error) {
 }
 
 func readTarGz(srcFile string) (map[string][]byte, error) {
+	l := logger.With("archiveFile", srcFile)
 	file, err := os.Open(srcFile)
 	if err != nil {
 		return nil, err
@@ -313,6 +349,16 @@ func readTarGz(srcFile string) (map[string][]byte, error) {
 		// We expect all files to be in the root directory of the archive so we strip out the leading ./ from the filename
 		contents[filepath.Base(header.Name)] = buf.Bytes()
 	}
+
+	filenames := make([]string, 0, len(contents))
+	for filename := range contents {
+		if filename != "." {
+			filenames = append(filenames, filename)
+		}
+	}
+	sort.Strings(filenames)
+
+	l.With("contents", filenames).Infof("Found %d files in archive", len(contents))
 
 	return contents, nil
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"go.uber.org/zap"
 	"io"
 	"os"
 	"path/filepath"
@@ -22,29 +23,37 @@ var (
 )
 
 type RelayArchiveService interface {
+	fmt.Stringer
 	fetchExisting(ctx context.Context) (*RelayArchive, error)
 	saveNew(ctx context.Context, relayArchive RelayArchive) error
 }
 
-var _ RelayArchiveService = &S3RelayArchiveService{}
+var _ RelayArchiveService = &s3RelayArchiveService{}
 
-type S3RelayArchiveService struct {
+type s3RelayArchiveService struct {
 	bucket   string
 	s3Client *s3.Client
+	logger   *zap.SugaredLogger
+}
+
+func (s s3RelayArchiveService) String() string {
+	return fmt.Sprintf("s3RelayArchiveService using bucket: [%s]", s.bucket)
 }
 
 func NewS3RelayArchiveService(s3Client *s3.Client, bucket string) (RelayArchiveService, error) {
-	return S3RelayArchiveService{
+	return s3RelayArchiveService{
 		bucket:   bucket,
 		s3Client: s3Client,
+		logger: logger.Named("s3RelayArchiveService").
+			With(zap.String("bucket", bucket)).
+			With(zap.String("objectKey", s3ObjectKey)),
 	}, nil
 }
 
-func (s S3RelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive, error) {
+func (s s3RelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive, error) {
 	existingRelayArchiveFilePath := filepath.Join(os.TempDir(), fmt.Sprintf("dorkly-%v.tar.gz", time.Now().UnixMicro()))
 
-	logger.Infof("Fetching existing relay archive from S3 bucket: [%s] with object key: [%s]. Saving to [%s]",
-		s.bucket, s3ObjectKey, existingRelayArchiveFilePath)
+	s.logger.Infof("Fetching existing relay archive from S3. Saving to [%s]", existingRelayArchiveFilePath)
 
 	goo, err := s.s3Client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(s.bucket),
@@ -77,11 +86,9 @@ func (s S3RelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive
 	return existing, nil
 }
 
-func (s S3RelayArchiveService) saveNew(ctx context.Context, relayArchive RelayArchive) error {
+func (s s3RelayArchiveService) saveNew(ctx context.Context, relayArchive RelayArchive) error {
 	archiveFilePath := filepath.Join(os.TempDir(), fmt.Sprintf("dorkly-%v.tar.gz", time.Now().UnixMicro()))
-
-	logger.Infof("Uploading new relay archive to S3 bucket: [%s] with object key: [%s]. Also saving to [%s]",
-		s.bucket, s3ObjectKey, archiveFilePath)
+	s.logger.Infof("Uploading new relay archive to S3. Also saving to [%s]", archiveFilePath)
 
 	err := relayArchive.toTarGzFile(archiveFilePath)
 	if err != nil {
@@ -104,21 +111,25 @@ func (s S3RelayArchiveService) saveNew(ctx context.Context, relayArchive RelayAr
 	return err
 }
 
-var _ RelayArchiveService = &LocalFileRelayArchiveService{}
+var _ RelayArchiveService = &localFileRelayArchiveService{}
 
-type LocalFileRelayArchiveService struct {
+type localFileRelayArchiveService struct {
 	archivePath string
+}
+
+func (l *localFileRelayArchiveService) String() string {
+	return fmt.Sprintf("localFileRelayArchiveService using path: [%s]", l.archivePath)
 }
 
 // NewLocalFileRelayArchiveService creates a RelayArchiveService that reads and writes to a local file. It is intended for testing.
 // It uses one path for both reading and writing which means it will overwrite an existing archive when calling saveNew
 func NewLocalFileRelayArchiveService(archivePath string) RelayArchiveService {
-	return &LocalFileRelayArchiveService{
+	return &localFileRelayArchiveService{
 		archivePath: archivePath,
 	}
 }
 
-func (l *LocalFileRelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive, error) {
+func (l *localFileRelayArchiveService) fetchExisting(ctx context.Context) (*RelayArchive, error) {
 	existing, err := loadRelayArchiveFromTarGzFile(l.archivePath)
 	if err != nil {
 		return nil, err
@@ -126,6 +137,6 @@ func (l *LocalFileRelayArchiveService) fetchExisting(ctx context.Context) (*Rela
 	return existing, nil
 }
 
-func (l *LocalFileRelayArchiveService) saveNew(ctx context.Context, relayArchive RelayArchive) error {
+func (l *localFileRelayArchiveService) saveNew(ctx context.Context, relayArchive RelayArchive) error {
 	return relayArchive.toTarGzFile(l.archivePath)
 }

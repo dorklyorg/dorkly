@@ -2,11 +2,13 @@ package dorkly
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
 type SecretsService interface {
+	fmt.Stringer
 	getSdkKey(ctx context.Context, project, env string) (string, error)
 	getMobileKey(ctx context.Context, project, env string) (string, error)
 }
@@ -15,6 +17,10 @@ var _ SecretsService = &awsSecretsService{}
 
 type awsSecretsService struct {
 	awsConfig aws.Config
+}
+
+func (s awsSecretsService) String() string {
+	return "awsSecretsService"
 }
 
 func NewAwsSecretsService(awsConfig aws.Config) SecretsService {
