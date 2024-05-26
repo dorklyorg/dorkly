@@ -110,8 +110,12 @@ func reconcile(old, new RelayArchive) (RelayArchive, error) {
 		oldEnv := old.envs[envKey]
 		newEnv := new.envs[envKey]
 
-		// compare env metadata ignoring versions
+		// These fields are not tracked in the local project yaml, so we need to copy them over
 		newEnv.metadata.EnvMetadata.Version = oldEnv.metadata.EnvMetadata.Version
+		newEnv.metadata.DataId = oldEnv.metadata.DataId
+		newEnv.metadata.dataId = oldEnv.metadata.dataId
+
+		// compare env metadata ignoring versions
 		if !reflect.DeepEqual(oldEnv.metadata, newEnv.metadata) {
 			logger.With("env", envKey).Info("Environment metadata changed.")
 			newEnv.metadata.EnvMetadata.Version++
