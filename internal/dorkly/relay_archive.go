@@ -49,6 +49,14 @@ func (e *Env) String() string {
 		e.metadata.EnvMetadata.EnvName, e.metadata.EnvMetadata.Version, e.metadata.DataId, e.data.String())
 }
 
+func (e *Env) computeDataId() {
+	dataId := e.metadata.EnvMetadata.Version
+	for _, flag := range e.data.Flags {
+		dataId += flag.Version
+	}
+	e.metadata.DataId = fmt.Sprintf("%d", dataId)
+}
+
 // RelayArchiveEnv is a representation of the <env>.json file in the relay archive
 type RelayArchiveEnv struct {
 	EnvMetadata RelayArchiveEnvMetadata `json:"env"`
@@ -56,23 +64,10 @@ type RelayArchiveEnv struct {
 	// this must be changed in order for flag changes to be picked up.
 	// the official relay archive uses a double-quoted string like this: "\"<value>\""
 	DataId string `json:"dataId"`
-
-	// internal representation of dataId
-	dataId int
 }
 
 func (a *RelayArchiveEnv) String() string {
 	return fmt.Sprintf("Env: %v, DataId: %v", a.EnvMetadata.String(), a.DataId)
-}
-
-func (a *RelayArchiveEnv) incrementDataId() {
-	a.dataId++
-	a.setDataId(a.dataId)
-}
-
-func (a *RelayArchiveEnv) setDataId(dataId int) {
-	a.dataId = dataId
-	a.DataId = fmt.Sprintf("\"%d\"", a.dataId)
 }
 
 type RelayArchiveEnvMetadata struct {

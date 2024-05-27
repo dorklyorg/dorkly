@@ -18,33 +18,33 @@ func Test_Reconcile(t *testing.T) {
 		{
 			name: "no change",
 			old: relayArchive().
-				env(env("staging").version(1).dataId(1).
+				env(env("staging").version(1).dataId("2").
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			new: relayArchive().
 				env(env("staging").
 					flag(booleanFlag("flag1").variation(false))),
 			expected: relayArchive().
-				env(env("staging").version(1).dataId(1).
+				env(env("staging").version(1).dataId("2").
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			wantErr: assert.NoError,
 		},
 		{
 			name: "toggle flag",
 			old: relayArchive().
-				env(env("staging").version(1).dataId(1).
+				env(env("staging").version(1).dataId("2").
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			new: relayArchive().
 				env(env("staging").
 					flag(booleanFlag("flag1").variation(true))),
 			expected: relayArchive().
-				env(env("staging").version(1).dataId(2).
+				env(env("staging").version(1).dataId("3").
 					flag(booleanFlag("flag1").variation(true).version(2))),
 			wantErr: assert.NoError,
 		},
 		{
 			name: "new flag",
 			old: relayArchive().
-				env(env("staging").version(1).dataId(1).
+				env(env("staging").version(1).dataId("2").
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			new: relayArchive().
 				env(env("staging").
@@ -52,7 +52,7 @@ func Test_Reconcile(t *testing.T) {
 					flag(booleanFlag("flag2").variation(true)),
 				),
 			expected: relayArchive().
-				env(env("staging").version(1).dataId(2).
+				env(env("staging").version(1).dataId("3").
 					flag(booleanFlag("flag1").variation(false).version(1)).
 					flag(booleanFlag("flag2").variation(true).version(1)),
 				),
@@ -61,12 +61,12 @@ func Test_Reconcile(t *testing.T) {
 		{
 			name: "deleted flag",
 			old: relayArchive().
-				env(env("staging").version(1).dataId(1).
+				env(env("staging").version(1).dataId("2").
 					flag(booleanFlag("flag1").variation(false).version(1))),
 			new: relayArchive().
 				env(env("staging").version(1)),
 			expected: relayArchive().
-				env(env("staging").version(1).dataId(2).
+				env(env("staging").version(1).dataId("3").
 					flag(booleanFlag("flag1").variation(false).version(2).deleted(true))),
 			wantErr: assert.NoError,
 		},
@@ -102,20 +102,22 @@ type envBuilder struct {
 }
 
 func env(key string) envBuilder {
-	return envBuilder{Env{
-		RelayArchiveEnv{
-			EnvMetadata: RelayArchiveEnvMetadata{
-				EnvID:   key,
-				EnvKey:  key,
-				EnvName: key,
-			},
+	archiveEnv := RelayArchiveEnv{
+		EnvMetadata: RelayArchiveEnvMetadata{
+			EnvID:   key,
+			EnvKey:  key,
+			EnvName: key,
 		},
+	}
+
+	return envBuilder{Env{
+		archiveEnv,
 		RelayArchiveData{
 			Flags: map[string]ldmodel.FeatureFlag{},
 		}}}
 }
-func (b envBuilder) dataId(dataId int) envBuilder {
-	b.Env.metadata.setDataId(dataId)
+func (b envBuilder) dataId(dataId string) envBuilder {
+	b.Env.metadata.DataId = dataId
 	return b
 }
 

@@ -8,31 +8,6 @@ import (
 	"testing"
 )
 
-func Test_ArchiveEnvironmentRep_IncrementDataId(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    RelayArchiveEnv
-		expected RelayArchiveEnv
-	}{
-		{
-			name:     "zero",
-			input:    RelayArchiveEnv{},
-			expected: RelayArchiveEnv{dataId: 1, DataId: "\"1\""},
-		},
-		{
-			name:     "one",
-			input:    RelayArchiveEnv{dataId: 1, DataId: "\"1\""},
-			expected: RelayArchiveEnv{dataId: 2, DataId: "\"2\""},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.input.incrementDataId()
-			assert.Equal(t, tt.expected, tt.input)
-		})
-	}
-}
-
 // Ensures the round trip of archive -> files -> unmarshaling -> marshaling -> files -> archive works as expected.
 func Test_RelayArchive_RoundTrip(t *testing.T) {
 	var err error
