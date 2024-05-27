@@ -173,14 +173,7 @@ func (b booleanFlagBuilder) toLdFlag() ldmodel.FeatureFlag {
 		Variation: b.variationV,
 	}
 
-	flagBase := FlagBase{
-		key:            b.key,
-		Description:    "",
-		Type:           FlagTypeBoolean,
-		ServerSideOnly: false,
-	}
-
-	ldFlag := f.ToLdFlag(flagBase)
+	ldFlag := f.ToLdFlag(b.FlagBase)
 	ldFlag.Version = b.versionV
 	ldFlag.Deleted = b.isDeleted
 

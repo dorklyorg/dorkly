@@ -12,10 +12,11 @@ const (
 
 // FlagBase contains the common flag fields shared between environments
 type FlagBase struct {
-	key            string
-	Description    string   `yaml:"description"`
-	Type           FlagType `yaml:"type"`
-	ServerSideOnly bool     `yaml:"serverSideOnly"`
+	key             string
+	Description     string   `yaml:"description"`
+	Type            FlagType `yaml:"type"`
+	EnableMobileKey bool     `yaml:"enableMobileKey"`
+	EnableBrowser   bool     `yaml:"enableBrowser"`
 }
 
 type FlagType string
@@ -70,8 +71,8 @@ func (f *FlagBase) ldFeatureFlagBase() ldmodel.FeatureFlag {
 	return ldmodel.FeatureFlag{
 		Key: f.key,
 		ClientSideAvailability: ldmodel.ClientSideAvailability{
-			UsingMobileKey:     !f.ServerSideOnly,
-			UsingEnvironmentID: !f.ServerSideOnly,
+			UsingMobileKey:     f.EnableMobileKey,
+			UsingEnvironmentID: f.EnableBrowser,
 		},
 		// TODO: ld-relay archive json files also contain a "clientSide": boolean field.. do we need it?
 

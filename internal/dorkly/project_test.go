@@ -18,10 +18,11 @@ var (
 		Flags: map[string]Flag{
 			"boolean1": {
 				FlagBase: FlagBase{
-					key:            "boolean1",
-					Description:    "Human-readable description of the flag.",
-					Type:           "boolean",
-					ServerSideOnly: false,
+					key:             "boolean1",
+					Description:     "Human-readable description of the flag.",
+					Type:            "boolean",
+					EnableBrowser:   true,
+					EnableMobileKey: true,
 				},
 				envConfigs: map[string]FlagConfigForEnv{
 					"production": &FlagBoolean{Variation: false},
@@ -30,10 +31,11 @@ var (
 			},
 			"rollout1": {
 				FlagBase: FlagBase{
-					key:            "rollout1",
-					Description:    "Human-readable description of the flag.",
-					Type:           "booleanRollout",
-					ServerSideOnly: false,
+					key:             "rollout1",
+					Description:     "Human-readable description of the flag.",
+					Type:            "booleanRollout",
+					EnableBrowser:   true,
+					EnableMobileKey: true,
 				},
 				envConfigs: map[string]FlagConfigForEnv{
 					"production": &FlagBooleanRollout{PercentRollout: 31.0},

@@ -8,7 +8,7 @@
 - [x] Secrets: terraform: generate and store in aws secrets manager
 - [x] Secrets: dorkly go code: read from aws secrets manager and inject into each environment's config
 - [x] Use localstack to test s3
-- [...] Terraform: Repo-level readme should contain: general tips on connecting using ld sdk + injected url, sdk keys, etc for each env.
+- [...] Terraform: generated Repo-level readme should contain: general tips on connecting using ld sdk + injected url, sdk keys, etc for each env.
 - [...] Create project overview in README.md
 - [ ] Terraform: Add option per-env: Disable checking in sdk keys. (for production environments).
 - [ ] Good docs on client-side (js) sdk setup.
@@ -24,6 +24,7 @@
 - [ ] Terraform: Consider a command line tool to quickly create new flags and maybe turn them off in all envs
 - [ ] Terraform: Use freeform workflow with human input to create flags
 - [ ] Use localstack to do end to end testing (if possible)
+- [ ] Maybe never: Implement mobile key and client-side sdk setup (for now people should just use the client id)
 
 
 ## Pending DX tasks
