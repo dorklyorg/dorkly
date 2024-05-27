@@ -1,12 +1,11 @@
 # Project Description
 Open Source Feature Flag system.
-Dorkly is a git-based open-source feature flag backend for [LaunchDarkly](https://launchdarkly.com/features/feature-flags/) SDKs.
-This project implements a small but valuable subset of LaunchDarkly's featureset. It is not a drop-in replacement for LaunchDarkly. 
-It is intended to be a simple, open-source alternative for small projects that don't need all of LaunchDarkly's features or are unable to use LaunchDarkly's backend for compliance reasons.
+Dorkly is a git-based open source feature flag backend for [LaunchDarkly](https://launchdarkly.com/features/feature-flags/)'s open source SDKs.
 It consists of:
-1. A GitHub Action) that reads in human-friendly yaml files, and converts them to an archive format consumed by:
-2. A Docker image that runs a backend service that serves the flags to your application. This backend service is a [very thin wrapper](docker/Dockerfile) around the [ld-relay](https://docs.launchdarkly.com/sdk/relay-proxy) appliance running in [offline mode](https://docs.launchdarkly.com/sdk/relay-proxy/offline)
-3. A [Terraform module](https://registry.terraform.io/modules/dorklyorg/dorkly-flags/aws/latest) that provisions the backend service on AWS and sets up the necessary permissions, and a GitHub repository to store the flags.
+1. Feature flag definitions stored as yaml in a GitHub repository
+2. A GitHub Action that reads in human-friendly yaml files, and converts them to an archive format consumed by:
+3. A Docker image that runs a backend service that serves the flags to your application. This backend service is a [very thin wrapper](docker/Dockerfile) around the [ld-relay](https://docs.launchdarkly.com/sdk/relay-proxy) appliance running in [offline mode](https://docs.launchdarkly.com/sdk/relay-proxy/offline)
+4. A [Terraform module](https://registry.terraform.io/modules/dorklyorg/dorkly-flags/aws/latest) that provisions the backend service on AWS and sets up the necessary permissions, and a GitHub repository to store the flags.
 
 # Getting Started: One time setup
 ## First steps
@@ -67,6 +66,8 @@ In your newly created GitHub repo you'll notice some example yaml files under th
 ## Relevant Links
 [Feature Flags](https://launchdarkly.com/features/feature-flags/)
 [Relay Proxy Configuration](https://docs.launchdarkly.com/sdk/features/relay-proxy-configuration/proxy-mode)
+https://docs.launchdarkly.com/sdk/relay-proxy/sdk-config
+
 
 
 ### Go code

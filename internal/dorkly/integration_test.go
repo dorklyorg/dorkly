@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/launchdarkly/go-sdk-common/v3/ldtime"
 	"github.com/launchdarkly/go-server-sdk-evaluation/v3/ldmodel"
-	"github.com/launchdarkly/go-server-sdk/v7/interfaces"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
@@ -19,18 +17,24 @@ import (
 )
 
 // This test ensures the ld-relay can load a dorkly-generated archive and serve flags from it.
-func TestIntegration_LdRelayCanLoadArchive(t *testing.T) {
+// It serves as a partial integration test for the dorkly project.
+func TestDocker_LdRelayCanLoadArchive(t *testing.T) {
 	ctx := context.Background()
-	containerFlagsArchivePath := "/dorkly/flags.tar.gz"
 	containerReq := testcontainers.ContainerRequest{
-		Image:        "launchdarkly/ld-relay:8.4.2", // tag should be kept in sync with docker/Dockerfile
+		FromDockerfile: testcontainers.FromDockerfile{
+			Context:    "../../Docker/",
+			Dockerfile: "Dockerfile",
+			Repo:       "dorkly-testcontainers",
+			Tag:        "LdRelayCanLoadArchive",
+		},
 		ExposedPorts: []string{"8030/tcp"},
 		Env: map[string]string{
-			"FILE_DATA_SOURCE": containerFlagsArchivePath,
+			"LOG_LEVEL": "debug",
+			"S3_URL":    "required to be non-empty but ok to be this bogus value so we can ensure resiliency if S3 connection fails",
 		},
 		Files: []testcontainers.ContainerFile{{
 			HostFilePath:      "testdata/flags.tar.gz",
-			ContainerFilePath: containerFlagsArchivePath,
+			ContainerFilePath: "/dorkly/flags.tar.gz",
 			FileMode:          0755,
 		}},
 		WaitingFor: wait.ForLog("Starting server listening on port 8030"),
@@ -115,70 +119,10 @@ func testFlagsForEnv(t *testing.T, ctx context.Context, url, env string) {
 	})
 }
 
-// all structs below are copied from https://github.com/launchdarkly/ld-relay/blob/7d67cb6e8f4edd2e0ea5a20b7640a3d35a8e165d/internal/api/status_reps.go
-
 // StatusRep is the JSON representation returned by the status endpoint.
-//
-// This is exported for use in integration test code.
 type StatusRep struct {
-	Environments  map[string]EnvironmentStatusRep `json:"environments"`
-	Status        string                          `json:"status"`
-	Version       string                          `json:"version"`
-	ClientVersion string                          `json:"clientVersion"`
-}
-
-// EnvironmentStatusRep is the per-environment JSON representation returned by the status endpoint.
-//
-// This is exported for use in integration test code.
-type EnvironmentStatusRep struct {
-	SDKKey           string               `json:"sdkKey"`
-	EnvID            string               `json:"envId,omitempty"`
-	EnvKey           string               `json:"envKey,omitempty"`
-	EnvName          string               `json:"envName,omitempty"`
-	ProjKey          string               `json:"projKey,omitempty"`
-	ProjName         string               `json:"projName,omitempty"`
-	MobileKey        string               `json:"mobileKey,omitempty"`
-	ExpiringSDKKey   string               `json:"expiringSdkKey,omitempty"`
-	Status           string               `json:"status"`
-	ConnectionStatus ConnectionStatusRep  `json:"connectionStatus"`
-	DataStoreStatus  DataStoreStatusRep   `json:"dataStoreStatus"`
-	BigSegmentStatus *BigSegmentStatusRep `json:"bigSegmentStatus,omitempty"`
-}
-
-// BigSegmentStatusRep is the big segment status representation returned by the status endpoint.
-//
-// This is exported for use in integration test code.
-type BigSegmentStatusRep struct {
-	Available          bool                       `json:"available"`
-	PotentiallyStale   bool                       `json:"potentiallyStale"`
-	LastSynchronizedOn ldtime.UnixMillisecondTime `json:"lastSynchronizedOn"`
-}
-
-// ConnectionStatusRep is the data source status representation returned by the status endpoint.
-//
-// This is exported for use in integration test code.
-type ConnectionStatusRep struct {
-	State      interfaces.DataSourceState `json:"state"`
-	StateSince ldtime.UnixMillisecondTime `json:"stateSince"`
-	LastError  *ConnectionErrorRep        `json:"lastError,omitempty"`
-}
-
-// ConnectionErrorRep is the optional error information in ConnectionStatusRep.
-//
-// This is exported for use in integration test code.
-type ConnectionErrorRep struct {
-	Kind interfaces.DataSourceErrorKind `json:"kind"`
-	Time ldtime.UnixMillisecondTime     `json:"time"`
-}
-
-// DataStoreStatusRep is the data store status representation returned by the status endpoint.
-//
-// This is exported for use in integration test code.
-type DataStoreStatusRep struct {
-	State      string                     `json:"state"`
-	StateSince ldtime.UnixMillisecondTime `json:"stateSince"`
-	Database   string                     `json:"database,omitempty"`
-	DBServer   string                     `json:"dbServer,omitempty"`
-	DBPrefix   string                     `json:"dbPrefix,omitempty"`
-	DBTable    string                     `json:"dbTable,omitempty"`
+	Environments  map[string]interface{} `json:"environments"`
+	Status        string                 `json:"status"`
+	Version       string                 `json:"version"`
+	ClientVersion string                 `json:"clientVersion"`
 }

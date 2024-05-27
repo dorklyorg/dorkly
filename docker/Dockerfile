@@ -9,7 +9,7 @@ RUN apk add aws-cli jq --no-cache
 ENV FILE_DATA_SOURCE=/dorkly/flags.tar.gz
 
 # Sets ld-relay log level
-ENV LOG_LEVEL=debug
+ENV LOG_LEVEL=info
 
 COPY flags.tar.gz /dorkly/flags.tar.gz
 COPY pull.sh /pull.sh
