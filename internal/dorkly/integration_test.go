@@ -22,7 +22,7 @@ func TestDocker_LdRelayCanLoadArchive(t *testing.T) {
 	ctx := context.Background()
 	containerReq := testcontainers.ContainerRequest{
 		FromDockerfile: testcontainers.FromDockerfile{
-			Context:    "../../Docker/",
+			Context:    "../../docker/",
 			Dockerfile: "Dockerfile",
 			Repo:       "dorkly-testcontainers",
 			Tag:        "LdRelayCanLoadArchive",

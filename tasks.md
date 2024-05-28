@@ -8,9 +8,10 @@
 - [x] Secrets: terraform: generate and store in aws secrets manager
 - [x] Secrets: dorkly go code: read from aws secrets manager and inject into each environment's config
 - [x] Use localstack to test s3
-- [...] Terraform: generated Repo-level readme should contain: general tips on connecting using ld sdk + injected url, sdk keys, etc for each env.
+- [x] Terraform: generated env-level readme should contain: general tips on connecting using ld sdk + injected url, sdk keys, etc for each env.
+- [...] Terraform: generated repo readme should contain: links to docs, summary of environments.
 - [...] Create project overview in README.md
-- [ ] Terraform: Add option per-env: Disable checking in sdk keys. (for production environments).
+- [x] Terraform: Add option per-env: Disable checking in sdk keys. (for production environments).
 - [ ] Good docs on client-side (js) sdk setup.
 - [ ] Create a CONTRIBUTING.md
 - [ ] Terraform: github readme: link to docs
