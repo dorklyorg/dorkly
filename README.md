@@ -1,3 +1,11 @@
+# Dorkly Flags 'Backend' (in quotes because it's mostly just a GitHub Action)
+Not sure what's going on here? Check out the project overview [here](https://github.com/dorklyorg)
+
+This repo contains the backend bits for the Dorkly Flags project:
+1. Go code that runs in GitHub Actions to convert human-friendly yaml files to a format that can be consumed by the ld-relay appliance.
+2. Dockerfile to build the image used in the deployed backend service.
+
+## Everything below here is a work in progress and is probably not accurate.
 
 ### Process:
 1. Load config
@@ -10,10 +18,7 @@
 8. Create ld-relay archive of json + checksum files
 9. Save locally (testing) or upload to S3 (production)
 
-## Relevant Links
-[Feature Flags](https://launchdarkly.com/features/feature-flags/)
-[Relay Proxy Configuration](https://docs.launchdarkly.com/sdk/features/relay-proxy-configuration/proxy-mode)
-https://docs.launchdarkly.com/sdk/relay-proxy/sdk-config
+
 
 ### Go code
 The go code in this repo runs in GitHub Action provisioned by the [dorklyorg/dorkly-flags Terraform module](https://registry.terraform.io/modules/dorklyorg/dorkly-flags/aws/latest).
