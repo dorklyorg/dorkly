@@ -11,7 +11,7 @@
 - [x] Terraform: generated env-level readme should contain: general tips on connecting using ld sdk + injected url, sdk keys, etc for each env.
 - [x] Terraform: generated repo readme should contain: links to docs, summary of environments.
 - [x] Create project overview in dorklyor .github repo
-- [x] Terraform: Add option per-env: Disable checking in sdk keys. (for production environments).
+- [ ] REVERT THIS: Terraform: Add option per-env: Disable checking in sdk keys. (for production environments).
 - [ ] Good docs on client-side (js) sdk setup.
 - [ ] Create a CONTRIBUTING.md
 - [ ] Terraform: github readme: link to docs

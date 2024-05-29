@@ -1,8 +1,8 @@
-# Dorkly Flags 'Backend' (in quotes because it's mostly just a GitHub Action)
+# Dorkly Flags Backend Bits
 Not sure what's going on here? Check out the project overview [here](https://github.com/dorklyorg)
 
 This repo contains the backend bits for the Dorkly Flags project:
-1. Go code that runs in GitHub Actions to convert human-friendly yaml files to a format that can be consumed by the ld-relay appliance.
+1. Go code that runs in GitHub Actions converting human-friendly yaml files to a format that can be consumed by the ld-relay appliance.
 2. Dockerfile to build the image used in the deployed backend service.
 
 ## Everything below here is a work in progress and is probably not accurate.
