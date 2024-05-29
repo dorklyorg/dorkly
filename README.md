@@ -18,8 +18,6 @@ This repo contains the backend bits for the Dorkly Flags project:
 8. Create ld-relay archive of json + checksum files
 9. Save locally (testing) or upload to S3 (production)
 
-
-
 ### Go code
 The go code in this repo runs in GitHub Action provisioned by the [dorklyorg/dorkly-flags Terraform module](https://registry.terraform.io/modules/dorklyorg/dorkly-flags/aws/latest).
 
@@ -37,7 +35,6 @@ TAG=0.0.1 docker build --platform=linux/amd64 -t drichelson/dorkly:$TAG ./docker
 3. PR check to ensure well-formed yaml files
 4. Publish a GitHub action? then we don't need to check in a binary
 5. Send Slack notifications on changes.
-
 
 ### Current functionality is limited to a subset of LaunchDarkly's feature flag types.
 Here's what is supported:
