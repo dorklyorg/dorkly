@@ -10,16 +10,14 @@
 - [x] Use localstack to test s3
 - [x] Terraform: generated env-level readme should contain: general tips on connecting using ld sdk + injected url, sdk keys, etc for each env.
 - [x] Terraform: generated repo readme should contain: links to docs, summary of environments.
-- [x] Create project overview in dorklyor .github repo
-- [ ] REVERT THIS: Terraform: Add option per-env: Disable checking in sdk keys. (for production environments).
-- [ ] Good docs on client-side (js) sdk setup.
+- [x] Create project overview in .github repo
+- [x] Docs on client-side (js) sdk setup.
 - [ ] Create a CONTRIBUTING.md
-- [ ] Terraform: github readme: link to docs
+- [x] Terraform: github readme: link to docs
 - [ ] Terraform: github repo: set up protected branch + pull request checks
 - [ ] yaml files validation: warn if flag is defined in the project but not an environment
 - [ ] yaml files validation: error if flag is defined in an environment but not in the project
 - [ ] yaml files validation: error if env flag type does not match project flag type (ie 'true' for a rollout flag)
-
 
 ### Maybe not required for MVP:
 - [ ] Consider enabling configuring ld-relay client context (aka goals endpoint): https://github.com/launchdarkly/ld-relay/blob/1adf0dde5b11343d3bdf011c86e3f7116c4960fc/internal/relayenv/js_context.go#L7
@@ -29,13 +27,11 @@
 - [ ] Use localstack to do end to end testing (if possible)
 - [ ] Maybe never: Implement mobile key and client-side sdk setup (for now people should just use the client id)
 
-
 ### Pending DX tasks
 - [ ] temporary files and archives: keep them in memory avoiding weird filesystem bugs/flaky tests.
 
 ### Probably not required for MVP:
 - [ ] Document handling of deleted environments... what happens to the flags?
-- [x] Environment: Specify production or non-production (for displaying secrets or keeping them locked up in aws secrets manager)
 - [ ] auto-publish new docker image on push to main.
 - [x] Create dorkly org in docker hub
 - [ ] AWS credentials in GitHub actions: Use suggested approach described here: https://github.com/marketplace/actions/configure-aws-credentials-action-for-github-actions#overview
@@ -43,3 +39,4 @@
 - [x] Yaml parsing: smarter handling of DataId field (don't store it as 2 fields)
 - [ ] Maybe: Publish binary artifact to Github and consume in Github Action (or publish a github action)
 - [ ] Maybe: thin wrappers around SDKs that handle custom url and disabling of events (this is potentially a maintenance headache)
+- [ ] At flag overview level: enable default variations (can be overridden at env level)
