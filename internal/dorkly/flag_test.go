@@ -7,6 +7,117 @@ import (
 	"testing"
 )
 
+func TestFlagBooleanRollout_Validate(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    FlagBooleanRollout
+		expected *FlagBooleanRollout
+		wantErr  bool
+	}{
+		{
+			name: "ValidPercentages",
+			input: FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True:  30.0,
+					False: 70.0,
+				},
+			},
+			expected: &FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True:  30.0,
+					False: 70.0,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "ValidTruePercentage",
+			input: FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True: 30.0,
+				},
+			},
+			expected: &FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True:  30.0,
+					False: 70.0,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "ValidFalsePercentage",
+			input: FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					False: 70.0,
+				},
+			},
+			expected: &FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True:  30.0,
+					False: 70.0,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "NegativeTruePercentage",
+			input: FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True:  -10.0,
+					False: 70.0,
+				},
+			},
+			expected: nil,
+			wantErr:  true,
+		},
+		{
+			name: "NegativeFalsePercentage",
+			input: FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True:  30.0,
+					False: -10.0,
+				},
+			},
+			expected: nil,
+			wantErr:  true,
+		},
+		{
+			name: "SumGreaterThan100",
+			input: FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True:  60.0,
+					False: 50.0,
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "BothPercentagesZero",
+			input: FlagBooleanRollout{
+				PercentRollout: BooleanRolloutVariation{
+					True:  0.0,
+					False: 0.0,
+				},
+			},
+			expected: nil,
+			wantErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.input.Validate(FlagBase{})
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expected, &tt.input)
+			}
+		})
+	}
+}
+
 func Test_FlagBoolean_ToLdFlag(t *testing.T) {
 	cases := []struct {
 		name     string

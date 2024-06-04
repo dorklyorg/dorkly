@@ -110,10 +110,16 @@ func (p *Project) loadFlagYamlFile(filePath string) (*Flag, error) {
 	flag.key = getFileNameNoSuffix(f.Name())
 	flag.envConfigs = make(map[string]FlagConfigForEnv)
 	for _, env := range p.environments {
-		flag.envConfigs[env], err = p.loadFlagConfigForEnvYamlFile(flag, filepath.Join(p.path, "environments", env, flag.key+".yml"))
+		flagEnvConfig, err := p.loadFlagConfigForEnvYamlFile(flag, filepath.Join(p.path, "environments", env, flag.key+".yml"))
 		if err != nil {
 			return nil, err
 		}
+		err = flagEnvConfig.Validate(flag.FlagBase)
+		if err != nil {
+			return nil, err
+		}
+		flag.envConfigs[env] = flagEnvConfig
+
 	}
 
 	return &flag, nil

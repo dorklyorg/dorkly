@@ -2,6 +2,7 @@ package dorkly
 
 import (
 	"encoding/base64"
+	"errors"
 	"github.com/launchdarkly/go-sdk-common/v3/ldvalue"
 	"github.com/launchdarkly/go-server-sdk-evaluation/v3/ldmodel"
 )
@@ -30,20 +31,56 @@ const (
 // when combined with a FlagBase, it can be converted to a LaunchDarkly FeatureFlag
 type FlagConfigForEnv interface {
 	ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag
+	Validate(flagBase FlagBase) error
 }
+
+var _ FlagConfigForEnv = &FlagBoolean{}
 
 // FlagBoolean is a boolean flag that is either on (true) or off (false)
 type FlagBoolean struct {
 	Variation bool `yaml:"variation"`
 }
 
+func (f *FlagBoolean) Validate(flagBase FlagBase) error {
+	return nil
+}
+
 func (f *FlagBoolean) ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag {
 	return flagBase.ldFeatureFlagBoolean(f.Variation)
 }
 
+var _ FlagConfigForEnv = &FlagBooleanRollout{}
+
 // FlagBooleanRollout is a boolean flag that is on (true) for a percentage of users based on the id field
 type FlagBooleanRollout struct {
 	PercentRollout BooleanRolloutVariation `yaml:"percentRollout"`
+}
+
+func (f *FlagBooleanRollout) Validate(flagBase FlagBase) error {
+	if f.PercentRollout.True < 0.0 {
+		return errors.New("percentRollout.true must be >= 0")
+	}
+	if f.PercentRollout.False < 0.0 {
+		return errors.New("percentRollout.false must be >= 0")
+	}
+
+	if f.PercentRollout.True+f.PercentRollout.False > 100 {
+		return errors.New("sum of percentRollout values must be <= 100")
+	}
+
+	if f.PercentRollout.True == 0.0 && f.PercentRollout.False == 0 {
+		return errors.New("at least one of percentRollout.true or percentRollout.false must be > 0")
+	}
+
+	if f.PercentRollout.True == 0.0 {
+		f.PercentRollout.True = 100.0 - f.PercentRollout.False
+	}
+
+	if f.PercentRollout.False == 0.0 {
+		f.PercentRollout.False = 100.0 - f.PercentRollout.True
+	}
+
+	return nil
 }
 
 type BooleanRolloutVariation struct {

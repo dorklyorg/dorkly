@@ -38,8 +38,8 @@ var (
 					EnableMobileKey: true,
 				},
 				envConfigs: map[string]FlagConfigForEnv{
-					"production": &FlagBooleanRollout{PercentRollout: 31.0},
-					"staging":    &FlagBooleanRollout{PercentRollout: 100.0},
+					"production": &FlagBooleanRollout{PercentRollout: BooleanRolloutVariation{True: 31.0, False: 69.0}},
+					"staging":    &FlagBooleanRollout{PercentRollout: BooleanRolloutVariation{True: 100.0, False: 0.0}},
 				},
 			},
 		},
