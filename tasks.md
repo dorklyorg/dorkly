@@ -14,7 +14,8 @@
 - [x] Docs on client-side (js) sdk setup.
 - [ ] Create a CONTRIBUTING.md
 - [x] Terraform: github readme: link to docs
-- [ ] Terraform: github repo: set up protected branch + pull request checks
+- [x] Terraform: github repo: set up protected branch + pull request checks
+- [ ] Terraform: Add variable to specify sdks. This informs the quickstart sections in the readmes.
 - [ ] yaml files validation: warn if flag is defined in the project but not an environment
 - [ ] yaml files validation: error if flag is defined in an environment but not in the project
 - [x] yaml files validation: error if env flag type does not match project flag type (ie 'true' for a rollout flag). This will fail yaml unmarshaling.

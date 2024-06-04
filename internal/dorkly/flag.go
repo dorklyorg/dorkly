@@ -43,7 +43,12 @@ func (f *FlagBoolean) ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag {
 
 // FlagBooleanRollout is a boolean flag that is on (true) for a percentage of users based on the id field
 type FlagBooleanRollout struct {
-	PercentRollout float64 `yaml:"percentRollout"`
+	PercentRollout BooleanRolloutVariation `yaml:"percentRollout"`
+}
+
+type BooleanRolloutVariation struct {
+	True  float64 `yaml:"true"`
+	False float64 `yaml:"false"`
 }
 
 func (f *FlagBooleanRollout) ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag {
@@ -54,17 +59,21 @@ func (f *FlagBooleanRollout) ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag {
 			ContextKind: contextKindUser,
 			Variations: []ldmodel.WeightedVariation{
 				{
-					Variation: 0,                              // true
-					Weight:    int(f.PercentRollout * 1000.0), // percentRollout 100% = 100000
+					Variation: 0, // true
+					Weight:    percentToLdWeight(f.PercentRollout.True),
 				},
 				{
-					Variation: 1,                                        // false
-					Weight:    int((100.0 - f.PercentRollout) * 1000.0), // percentRollout 0% = 0
+					Variation: 1, // false
+					Weight:    percentToLdWeight(f.PercentRollout.False),
 				},
 			},
 		},
 	}
 	return ldFlag
+}
+
+func percentToLdWeight(percent float64) int {
+	return int(percent * 1000.0)
 }
 
 func (f *FlagBase) ldFeatureFlagBase() ldmodel.FeatureFlag {

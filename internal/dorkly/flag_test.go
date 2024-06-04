@@ -71,7 +71,7 @@ func Test_FlagBooleanRollout_ToLdFlag(t *testing.T) {
 		{
 			name: "100% rollout",
 			flag: FlagBooleanRollout{
-				PercentRollout: 100.0,
+				PercentRollout: BooleanRolloutVariation{True: 100.0, False: 0.0},
 			},
 			flagBase: FlagBase{
 				key:             "test-key",
@@ -109,7 +109,7 @@ func Test_FlagBooleanRollout_ToLdFlag(t *testing.T) {
 		{
 			name: "10% rollout",
 			flag: FlagBooleanRollout{
-				PercentRollout: 10.0,
+				PercentRollout: BooleanRolloutVariation{True: 10.0, False: 90.0},
 			},
 			flagBase: FlagBase{
 				key:             "test-key-10",
