@@ -80,27 +80,20 @@ func s3Client(ctx context.Context, l *localstack.LocalStackContainer) (*s3.Clien
 		return nil, err
 	}
 
-	customResolver := aws.EndpointResolverWithOptionsFunc(
-		func(service, region string, opts ...interface{}) (aws.Endpoint, error) {
-			return aws.Endpoint{
-				PartitionID:   "aws",
-				URL:           fmt.Sprintf("http://%s:%d", host, mappedPort.Int()),
-				SigningRegion: region,
-			}, nil
-		})
-
 	awsCfg, err := config.LoadDefaultConfig(ctx,
 		config.WithRegion(awsRegion),
-		config.WithEndpointResolverWithOptions(customResolver),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider("accesskey", "secret", "token")),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	client := s3.NewFromConfig(awsCfg, func(o *s3.Options) {
-		o.UsePathStyle = true
-	})
+	client := s3.NewFromConfig(awsCfg,
+		func(o *s3.Options) {
+			o.UsePathStyle = true
+			o.BaseEndpoint = aws.String(fmt.Sprintf("http://%s:%d", host, mappedPort.Int()))
+		},
+	)
 
 	return client, nil
 }
