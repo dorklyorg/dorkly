@@ -181,11 +181,11 @@ func (p *Project) toRelayArchive() *RelayArchive {
 					EnvID:    env,
 					EnvKey:   env,
 					EnvName:  env,
-					MobKey:   insecureMobileKey(env), //TODO: load from env var?
+					MobKey:   insecureMobileKey(env),
 					ProjKey:  p.Name,
 					ProjName: p.Name,
 					SDKKey: SDKKeyRep{
-						Value: insecureSdkKey(env), //TODO: load from env var?
+						Value: insecureSdkKey(env),
 					},
 					DefaultTTL: 0,
 					SecureMode: false,

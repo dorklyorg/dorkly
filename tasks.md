@@ -12,10 +12,13 @@
 - [x] Terraform: generated repo readme should contain: links to docs, summary of environments.
 - [x] Create project overview in .github repo
 - [x] Docs on client-side (js) sdk setup.
+- [ ] Docs: (from feedback): Split up docs and consider using GitHub Pages.
+- [ ] Docs: (from feedback): Have an SDK setup page linking to https://docs.launchdarkly.com/sdk/features/config and https://docs.launchdarkly.com/sdk/features/service-endpoint-configuration
+- [ ] Docs: (from feedback): Generated 'Quick Start' section might be tricky to translate to other SDKs..
+- [ ] Docs: (from feedback): Allow users to specify their SDKs in terraform and then only generate SDK examples based on those preferences.
 - [ ] Create a CONTRIBUTING.md
 - [x] Terraform: github readme: link to docs
 - [x] Terraform: github repo: set up protected branch + pull request checks
-- [ ] Terraform: Add variable to specify sdks. This informs the quickstart sections in the readmes.
 - [ ] yaml files validation: warn if flag is defined in the project but not an environment
 - [ ] yaml files validation: error if flag is defined in an environment but not in the project
 - [x] yaml files validation: error if env flag type does not match project flag type (ie 'true' for a rollout flag). This will fail yaml unmarshaling.
