@@ -1,5 +1,5 @@
 # Dorkly Flags Backend Bits
-More info on the Dorkly project](https://github.com/dorklyorg/dorkly/wiki)
+[More info on the Dorkly project](https://github.com/dorklyorg/dorkly/wiki)
 
 This repo contains the backend bits for the Dorkly Flags project:
 1. Go code that runs in GitHub Actions converting human-friendly yaml files to a format that can be consumed by the ld-relay appliance.
