@@ -1,27 +1,8 @@
 ## Pending feature tasks for the project
-- [x] project.yml file: remove environments field and instead read in directories in environments folder
-- [x] project.yml file: change key to name
-- [x] Create terraform module in separate repo with example
-- [x] Do all S3 stuff in go code. (with option for local mode testing)
-- [x] Logging: switch to zap or similar
-- [x] Logging: more descriptive log messages + clear indication of steps.
-- [x] Secrets: terraform: generate and store in aws secrets manager
-- [x] Secrets: dorkly go code: read from aws secrets manager and inject into each environment's config
-- [x] Use localstack to test s3
-- [x] Terraform: generated env-level readme should contain: general tips on connecting using ld sdk + injected url, sdk keys, etc for each env.
-- [x] Terraform: generated repo readme should contain: links to docs, summary of environments.
-- [x] Create project overview in .github repo
-- [x] Docs on client-side (js) sdk setup.
-- [x] Docs: (from feedback): Split up docs into a wiki: https://github.com/dorklyorg/dorkly/wiki
-- [x] Docs: (from feedback): Have an SDK setup page linking to https://docs.launchdarkly.com/sdk/features/config and https://docs.launchdarkly.com/sdk/features/service-endpoint-configuration
-- [x] Docs: (from feedback): Generated 'Quick Start' section might be tricky to translate to other SDKs..
 - [ ] Create a CONTRIBUTING.md
-- [x] Terraform: github readme: link to docs
-- [x] Terraform: github repo: set up protected branch + pull request checks
 - [ ] Terraform: HA setup: multiple relay instances behind a load balancer all receiving updates
 - [ ] yaml files validation: warn if flag is defined in the project but not an environment
 - [ ] yaml files validation: error if flag is defined in an environment but not in the project
-- [x] yaml files validation: error if env flag type does not match project flag type (ie 'true' for a rollout flag). This will fail yaml unmarshaling.
 
 ### Maybe not required for MVP:
 - [ ] Consider enabling configuring ld-relay client context (aka goals endpoint): https://github.com/launchdarkly/ld-relay/blob/1adf0dde5b11343d3bdf011c86e3f7116c4960fc/internal/relayenv/js_context.go#L7
@@ -35,10 +16,8 @@
 ### Probably not required for MVP:
 - [ ] Document handling of deleted environments... what happens to the flags?
 - [ ] auto-publish new docker image on push to main.
-- [x] Create dorkly org in docker hub
 - [ ] AWS credentials in GitHub actions: Use suggested approach described here: https://github.com/marketplace/actions/configure-aws-credentials-action-for-github-actions#overview
 - [ ] Consider using https://pkg.go.dev/github.com/sethvargo/go-githubactions or similar
-- [x] Yaml parsing: smarter handling of DataId field (don't store it as 2 fields)
 - [ ] Maybe: Publish binary artifact to Github and consume in Github Action (or publish a github action)
 - [ ] Maybe: thin wrappers around SDKs that handle custom url and disabling of events (this is potentially a maintenance headache)
 - [ ] At flag overview level: enable default variations (can be overridden at env level)
