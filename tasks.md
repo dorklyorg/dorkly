@@ -18,7 +18,7 @@
 - [ ] Create a CONTRIBUTING.md
 - [x] Terraform: github readme: link to docs
 - [x] Terraform: github repo: set up protected branch + pull request checks
-- [ ] Terraform: HA setup: multiple relay instances behind a load balancer
+- [ ] Terraform: HA setup: multiple relay instances behind a load balancer all receiving updates
 - [ ] yaml files validation: warn if flag is defined in the project but not an environment
 - [ ] yaml files validation: error if flag is defined in an environment but not in the project
 - [x] yaml files validation: error if env flag type does not match project flag type (ie 'true' for a rollout flag). This will fail yaml unmarshaling.
@@ -26,8 +26,7 @@
 ### Maybe not required for MVP:
 - [ ] Consider enabling configuring ld-relay client context (aka goals endpoint): https://github.com/launchdarkly/ld-relay/blob/1adf0dde5b11343d3bdf011c86e3f7116c4960fc/internal/relayenv/js_context.go#L7
 - [ ] Terraform: validate variables (see TODOs in https://github.com/dorklyorg/terraform-aws-dorkly-flags/blob/main/variables.tf)
-- [ ] Terraform: Consider a command line tool to quickly create new flags and maybe turn them off in all envs
-- [ ] Terraform: Use freeform workflow with human input to create flags
+- [ ] Terraform: Create freeform Github workflow with human input to create flags and perform other tasks
 - [ ] Use localstack to do end to end testing (if possible)
 
 ### Pending DX tasks
