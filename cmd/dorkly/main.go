@@ -13,9 +13,9 @@ import (
 
 const (
 	dorklyYamlEnvVar           = "DORKLY_YAML"
+	dorklyEndpointEnvVar       = "DORKLY_ENDPOINT"
+	s3BucketEnvVar             = "DORKLY_S3_BUCKET"
 	defaultDorklyYamlInputPath = "project"
-
-	s3BucketEnvVar = "DORKLY_S3_BUCKET"
 )
 
 var logger = dorkly.GetLogger()
@@ -26,6 +26,11 @@ func main() {
 	if dorklyYamlInputPath == "" {
 		logger.Debugf("Env var [%s] not set. Using default: %s", dorklyYamlEnvVar, defaultDorklyYamlInputPath)
 		dorklyYamlInputPath = defaultDorklyYamlInputPath
+	}
+
+	dorklyEndpoint := os.Getenv(dorklyEndpointEnvVar)
+	if dorklyEndpoint == "" {
+		logger.Fatalf("Required env var [%s] not set.", dorklyEndpointEnvVar)
 	}
 
 	s3Bucket := os.Getenv(s3BucketEnvVar)
@@ -48,7 +53,7 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	reconciler := dorkly.NewReconciler(s3ArchiveService, secretsService, dorklyYamlInputPath)
+	reconciler := dorkly.NewReconciler(s3ArchiveService, secretsService, dorklyYamlInputPath, dorklyEndpoint)
 
 	err = reconciler.Reconcile(ctx)
 	if err != nil {

@@ -11,8 +11,6 @@ import (
 	"time"
 )
 
-// inputs: endpoint, list of envs each containing: name, sdk key, expected flags with versions.
-
 type updateMonitor struct {
 	logger               *zap.SugaredLogger
 	endpoint             string
@@ -24,8 +22,10 @@ type updateMonitor struct {
 	ldClient           *ldclient.LDClient
 }
 
-func NewUpdateMonitor(endpoint string, envName string, sdkKey string, expectedFlagVersions map[string]int) (*updateMonitor, error) {
-	l := logger.Named("updateMonitor").With(zap.String("endpoint", endpoint), zap.String("envName", envName), zap.String("sdkKey", sdkKey)).With("expectedFlagVersions", expectedFlagVersions)
+func newUpdateMonitor(endpoint string, envName string, sdkKey string, expectedFlagVersions map[string]int) (*updateMonitor, error) {
+	l := logger.Named("updateMonitor").
+		With(zap.String("endpoint", endpoint), zap.String("envName", envName), zap.String("sdkKey", sdkKey)).
+		With("expectedFlagVersions", expectedFlagVersions)
 
 	ldConfig := ldclient.Config{
 		ServiceEndpoints: ldcomponents.RelayProxyEndpoints("https://dorkly-example-test.mbe39aim2pgh2.us-west-2.cs.amazonlightsail.com/"),
@@ -46,11 +46,12 @@ func NewUpdateMonitor(endpoint string, envName string, sdkKey string, expectedFl
 		envName:              envName,
 		sdkKey:               sdkKey,
 		expectedFlagVersions: expectedFlagVersions,
+		actualFlagVersions:   make(map[string]int),
 		ldClient:             ldClient,
 	}, nil
 }
 
-func (m *updateMonitor) AwaitExpectedFlagVersions(maxWaitDuration time.Duration) error {
+func (m *updateMonitor) awaitExpectedFlagVersions(maxWaitDuration time.Duration) error {
 	tick := time.NewTicker(100 * time.Millisecond)
 	done := time.After(maxWaitDuration)
 	for {

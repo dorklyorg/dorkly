@@ -17,6 +17,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -29,6 +30,12 @@ type RelayArchive struct {
 	envs map[string]Env
 }
 
+// Env is a representation of the <env>.json and <env>-data.json files in the relay archive
+type Env struct {
+	metadata RelayArchiveEnv
+	data     RelayArchiveData
+}
+
 func (ra *RelayArchive) String() string {
 	envStrings := make([]string, 0, len(ra.envs))
 	for _, env := range ra.envs {
@@ -38,15 +45,50 @@ func (ra *RelayArchive) String() string {
 	return fmt.Sprintf("Environments: %v", strings.Join(envStrings, ", "))
 }
 
-// Env is a representation of the <env>.json and <env>-data.json files in the relay archive
-type Env struct {
-	metadata RelayArchiveEnv
-	data     RelayArchiveData
-}
-
 func (e *Env) String() string {
 	return fmt.Sprintf("(Name: %v, Version: %d, DataID: %v, Data: %v)",
 		e.metadata.EnvMetadata.EnvName, e.metadata.EnvMetadata.Version, e.metadata.DataId, e.data.String())
+}
+
+func (ra *RelayArchive) awaitExpectedFlagVersions(endpoint string, maxWaitDuration time.Duration) []error {
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(ra.envs))
+	start := time.Now()
+	for _, env := range ra.envs {
+		wg.Add(1)
+		go func(env Env) {
+			defer wg.Done()
+			// convert flags to map of flag key to version
+			expectedFlagVersions := make(map[string]int, len(env.data.Flags))
+			for flagKey, flag := range env.data.Flags {
+				expectedFlagVersions[flagKey] = flag.Version
+			}
+
+			monitor, err := newUpdateMonitor(endpoint, env.metadata.EnvMetadata.EnvName, env.metadata.EnvMetadata.SDKKey.Value, expectedFlagVersions)
+			if err != nil {
+				logger.With("env", env.metadata.EnvMetadata.EnvName).Errorf("Failed to create update monitor: %v", err)
+				errChan <- err
+				return
+			}
+			errChan <- monitor.awaitExpectedFlagVersions(maxWaitDuration)
+
+		}(env)
+	}
+	wg.Wait()
+	close(errChan)
+
+	// Collect all errors
+	var errs []error
+	for err := range errChan {
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	if len(errs) == 0 {
+		logger.Infof("All environments updated successfully in %v", time.Since(start))
+	}
+	return errs
 }
 
 func (e *Env) computeDataId() {

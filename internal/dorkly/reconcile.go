@@ -5,20 +5,23 @@ import (
 	"errors"
 	"go.uber.org/zap"
 	"reflect"
+	"time"
 )
 
 type Reconciler struct {
 	archiveService  RelayArchiveService
 	secretsService  SecretsService
 	projectYamlPath string
+	endpoint        string
 	logger          *zap.SugaredLogger
 }
 
-func NewReconciler(archiveService RelayArchiveService, secretsService SecretsService, projectYamlPath string) *Reconciler {
+func NewReconciler(archiveService RelayArchiveService, secretsService SecretsService, projectYamlPath string, endpoint string) *Reconciler {
 	return &Reconciler{
 		archiveService:  archiveService,
 		secretsService:  secretsService,
 		projectYamlPath: projectYamlPath,
+		endpoint:        endpoint,
 		logger:          logger.Named("Reconciler"),
 	}
 }
@@ -64,7 +67,7 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 	var reconciledArchive RelayArchive
 	err = runStep("Reconcile existing archive and local yaml project files into updated archive", func() error {
 		var err error
-		reconciledArchive, err = reconcile(*existingArchive, *newArchive)
+		reconciledArchive, err = reconcileArchives(*existingArchive, *newArchive)
 		logger.Infof("Reconciled archive for upload: %v", reconciledArchive.String())
 		return err
 	})
@@ -75,11 +78,25 @@ func (r *Reconciler) Reconcile(ctx context.Context) error {
 	err = runStep("Publish reconciled archive", func() error {
 		return r.archiveService.saveNew(ctx, reconciledArchive)
 	})
+	if err != nil {
+		return err
+	}
+
+	err = runStep("Await changes in backend service", func() error {
+		errs := reconciledArchive.awaitExpectedFlagVersions(r.endpoint, 5*time.Minute)
+		if len(errs) > 0 {
+			for i, err := range errs {
+				logger.Errorf("Error %d/%d: %v", i+1, len(errs), err)
+				return errors.New("awaiting changes in backend service failed. See log for details")
+			}
+		}
+		return nil
+	})
 
 	return err
 }
 
-func reconcile(old, new RelayArchive) (RelayArchive, error) {
+func reconcileArchives(old, new RelayArchive) (RelayArchive, error) {
 	compareResult := compareMapKeys(old.envs, new.envs)
 	logger.Infof("environments: %+v", compareResult)
 
