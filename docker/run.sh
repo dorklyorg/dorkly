@@ -1,10 +1,8 @@
 #!/bin/sh
 set -uxe
-# first time pull of flags archive:
-/pull.sh
 
-# listen for sqs messages in background:
-/sqs_listen.sh &
+# poll for s3 object changes in background:
+/s3_etag_poll.sh &
 
 # run ld-relay in foreground:
 /usr/bin/ldr --from-env

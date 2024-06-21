@@ -9,5 +9,5 @@ This repo contains the backend bits for the Dorkly Flags project:
 The Dockerfile is used to build the image used in the deployed backend service. It is built on top of the ld-relay image.
 To build and publish it: (requires docker login with permissions to push to drichelson)
 ```bash
-TAG=0.0.1 docker build --platform=linux/amd64 -t drichelson/dorkly:$TAG ./docker/ && docker push drichelson/dorkly:$TAG
+export TAG=0.0.6 && docker build --platform=linux/amd64 -t drichelson/dorkly:$TAG ./docker/ && docker push drichelson/dorkly:$TAG
 ```

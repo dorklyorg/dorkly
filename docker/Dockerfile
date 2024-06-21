@@ -14,7 +14,7 @@ ENV LOG_LEVEL=info
 COPY flags.tar.gz /dorkly/flags.tar.gz
 COPY pull.sh /pull.sh
 COPY run.sh /run.sh
-COPY sqs_listen.sh /sqs_listen.sh
-RUN chmod +x /pull.sh /run.sh /sqs_listen.sh
+COPY s3_etag_poll.sh /s3_etag_poll.sh
+RUN chmod +x /pull.sh /run.sh /s3_etag_poll.sh
 
 ENTRYPOINT ["/run.sh"]

@@ -7,7 +7,7 @@
 ### Maybe not required for MVP:
 - [ ] Consider enabling configuring ld-relay client context (aka goals endpoint): https://github.com/launchdarkly/ld-relay/blob/1adf0dde5b11343d3bdf011c86e3f7116c4960fc/internal/relayenv/js_context.go#L7
 - [ ] Terraform: validate variables (see TODOs in https://github.com/dorklyorg/terraform-aws-dorkly-flags/blob/main/variables.tf)
-- [ ] Terraform: Create freeform Github workflow with human input to create flags and perform other tasks
+- [ ] Terraform: Create freeform Github workflow with human input to create flags and perform other tasks ie create flag, create environment, etc.
 - [ ] Use localstack to do end to end testing (if possible)
 
 ### Pending DX tasks
