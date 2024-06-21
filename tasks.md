@@ -1,6 +1,6 @@
 ## Pending feature tasks for the project
 - [ ] Create a CONTRIBUTING.md
-- [ ] Terraform: HA setup: multiple relay instances behind a load balancer all receiving updates
+- [ ] Terraform: HA setup: multiple Dorkly server instances behind a load balancer all receiving updates.
 - [ ] yaml files validation: warn if flag is defined in the project but not an environment
 - [ ] yaml files validation: error if flag is defined in an environment but not in the project
 
