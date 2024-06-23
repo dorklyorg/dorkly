@@ -28,7 +28,7 @@ func newUpdateMonitor(endpoint string, envName string, sdkKey string, expectedFl
 		With("expectedFlagVersions", expectedFlagVersions)
 
 	ldConfig := ldclient.Config{
-		ServiceEndpoints: ldcomponents.RelayProxyEndpoints("https://dorkly-example-test.mbe39aim2pgh2.us-west-2.cs.amazonlightsail.com/"),
+		ServiceEndpoints: ldcomponents.RelayProxyEndpoints(endpoint),
 		Events:           ldcomponents.NoEvents(),
 		Logging:          ldcomponents.Logging().LogEvaluationErrors(true).MinLevel(ldlog.Debug),
 	}
