@@ -36,8 +36,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.12 h1:tzha+v1SCEBpX
 github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.12/go.mod h1:n+nt2qjHGoseWeLHt1vEr6ZRCCxIN2KcNpJxBcYQSwI=
 github.com/aws/aws-sdk-go-v2/service/s3 v1.56.1 h1:wsg9Z/vNnCmxWikfGIoOlnExtEU459cR+2d+iDJ8elo=
 github.com/aws/aws-sdk-go-v2/service/s3 v1.56.1/go.mod h1:8rDw3mVwmvIWWX/+LWY3PPIMZuwnQdJMCt0iVFVT3qw=
-github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.31.1 h1:fMhrWVym3nTAcf3eT9XsYcfN1kgQ/7ZuVLGHjPAn6Ms=
-github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.31.1/go.mod h1:tBCf2+VgRT/Lk9KIlKpTxyCunzxHcP8BFPqcck5I9mM=
+github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.32.0 h1:uXM5YKDEZ60grd2OfVs5uZSzRdqcL/eonj0iKmPFOgk=
+github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.32.0/go.mod h1:tBCf2+VgRT/Lk9KIlKpTxyCunzxHcP8BFPqcck5I9mM=
 github.com/aws/aws-sdk-go-v2/service/sso v1.21.1 h1:sd0BsnAvLH8gsp2e3cbaIr+9D7T1xugueQ7V/zUAsS4=
 github.com/aws/aws-sdk-go-v2/service/sso v1.21.1/go.mod h1:lcQG/MmxydijbeTOp04hIuJwXGWPZGI3bwdFDGRTv14=
 github.com/aws/aws-sdk-go-v2/service/ssooidc v1.25.1 h1:1uEFNNskK/I1KoZ9Q8wJxMz5V9jyBlsiaNrM7vA3YUQ=
