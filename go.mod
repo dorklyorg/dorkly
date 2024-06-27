@@ -4,15 +4,15 @@ go 1.22.2
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.0
-	github.com/aws/aws-sdk-go-v2/config v1.27.21
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.21
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.56.1
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.31.1
-	github.com/aws/aws-sdk-go-v2/service/sts v1.29.1
+	github.com/aws/aws-sdk-go-v2/config v1.27.22
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.22
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.57.0
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.32.0
+	github.com/aws/aws-sdk-go-v2/service/sts v1.30.0
 	github.com/go-errors/errors v1.5.1
 	github.com/launchdarkly/go-sdk-common/v3 v3.1.0
 	github.com/launchdarkly/go-server-sdk-evaluation/v3 v3.0.0
-	github.com/launchdarkly/go-server-sdk/v7 v7.4.1
+	github.com/launchdarkly/go-server-sdk/v7 v7.5.0
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.31.0
 	github.com/testcontainers/testcontainers-go/modules/localstack v0.31.0
@@ -36,8 +36,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.3.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.21.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.25.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.22.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.26.0 // indirect
 	github.com/aws/smithy-go v1.20.2 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/containerd/containerd v1.7.15 // indirect
@@ -62,7 +62,7 @@ require (
 	github.com/launchdarkly/ccache v1.1.0 // indirect
 	github.com/launchdarkly/eventsource v1.6.2 // indirect
 	github.com/launchdarkly/go-jsonstream/v3 v3.0.0 // indirect
-	github.com/launchdarkly/go-sdk-events/v3 v3.2.0 // indirect
+	github.com/launchdarkly/go-sdk-events/v3 v3.3.0 // indirect
 	github.com/launchdarkly/go-semver v1.0.2 // indirect
 	github.com/lufia/plan9stats v0.0.0-20240226150601-1dcf7310316a // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
