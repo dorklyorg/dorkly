@@ -1,3 +1,4 @@
+![go workflow](https://github.com/dorklyorg/dorkly/actions/workflows/go.yml/badge.svg)
 # Dorkly Flags Backend Bits
 [More info on the Dorkly project](https://github.com/dorklyorg/dorkly/wiki)
 
