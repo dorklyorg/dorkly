@@ -24,11 +24,10 @@ type FlagBase struct {
 	EnableBrowser   bool     `yaml:"enableBrowser"`
 }
 
-// FlagConfigForEnv is an interface for flag configs that are specific to an environment
-// when combined with a FlagBase, it can be converted to a LaunchDarkly FeatureFlag
+// FlagConfigForEnv is an interface for flag configs that are specific to an environment.
 type FlagConfigForEnv interface {
-	ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag
-	Validate(flagBase FlagBase) error
+	ToLdFlag() ldmodel.FeatureFlag
+	Validate() error
 }
 
 func percentToLdWeight(percent float64) int {

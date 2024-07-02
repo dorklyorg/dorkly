@@ -107,7 +107,7 @@ func TestFlagBooleanRollout_Validate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.input.Validate(FlagBase{})
+			err := tt.input.Validate()
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
@@ -122,13 +122,18 @@ func Test_FlagBoolean_ToLdFlag(t *testing.T) {
 	cases := []struct {
 		name     string
 		flag     FlagBoolean
-		flagBase FlagBase
 		expected ldmodel.FeatureFlag
 	}{
 		{
-			name:     "true,client-side ok",
-			flag:     FlagBoolean{Variation: true},
-			flagBase: FlagBase{key: "test-key", EnableBrowser: true, EnableMobileKey: true},
+			name: "true,client-side ok",
+			flag: FlagBoolean{
+				FlagBase: FlagBase{
+					key:             "test-key",
+					EnableBrowser:   true,
+					EnableMobileKey: true,
+				},
+				Variation: true,
+			},
 			expected: ldmodel.FeatureFlag{
 				Key: "test-key",
 				ClientSideAvailability: ldmodel.ClientSideAvailability{
@@ -144,12 +149,15 @@ func Test_FlagBoolean_ToLdFlag(t *testing.T) {
 		},
 		{
 			name: "false,server-side only",
-			flag: FlagBoolean{Variation: false},
-			flagBase: FlagBase{
-				key:             "test-key-2",
-				EnableBrowser:   false,
-				EnableMobileKey: false,
+			flag: FlagBoolean{
+				FlagBase: FlagBase{
+					key:             "test-key-2",
+					EnableBrowser:   false,
+					EnableMobileKey: false,
+				},
+				Variation: false,
 			},
+
 			expected: ldmodel.FeatureFlag{
 				Key: "test-key-2",
 				ClientSideAvailability: ldmodel.ClientSideAvailability{
@@ -167,7 +175,7 @@ func Test_FlagBoolean_ToLdFlag(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.expected, tt.flag.ToLdFlag(tt.flagBase))
+			assert.Equal(t, tt.expected, tt.flag.ToLdFlag())
 		})
 	}
 }
@@ -176,18 +184,17 @@ func Test_FlagBooleanRollout_ToLdFlag(t *testing.T) {
 	cases := []struct {
 		name     string
 		flag     FlagBooleanRollout
-		flagBase FlagBase
 		expected ldmodel.FeatureFlag
 	}{
 		{
 			name: "100% rollout",
 			flag: FlagBooleanRollout{
+				FlagBase: FlagBase{
+					key:             "test-key",
+					EnableBrowser:   true,
+					EnableMobileKey: true,
+				},
 				PercentRollout: BooleanRolloutVariation{True: 100.0, False: 0.0},
-			},
-			flagBase: FlagBase{
-				key:             "test-key",
-				EnableBrowser:   true,
-				EnableMobileKey: true,
 			},
 			expected: ldmodel.FeatureFlag{
 				Key: "test-key",
@@ -220,12 +227,12 @@ func Test_FlagBooleanRollout_ToLdFlag(t *testing.T) {
 		{
 			name: "10% rollout",
 			flag: FlagBooleanRollout{
+				FlagBase: FlagBase{
+					key:             "test-key-10",
+					EnableBrowser:   true,
+					EnableMobileKey: true,
+				},
 				PercentRollout: BooleanRolloutVariation{True: 10.0, False: 90.0},
-			},
-			flagBase: FlagBase{
-				key:             "test-key-10",
-				EnableBrowser:   true,
-				EnableMobileKey: true,
 			},
 			expected: ldmodel.FeatureFlag{
 				Key: "test-key-10",
@@ -259,7 +266,7 @@ func Test_FlagBooleanRollout_ToLdFlag(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			assert.Equal(t, c.expected, c.flag.ToLdFlag(c.flagBase))
+			assert.Equal(t, c.expected, c.flag.ToLdFlag())
 		})
 	}
 }

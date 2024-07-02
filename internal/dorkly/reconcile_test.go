@@ -170,10 +170,11 @@ func (b booleanFlagBuilder) version(version int) booleanFlagBuilder {
 
 func (b booleanFlagBuilder) toLdFlag() ldmodel.FeatureFlag {
 	f := FlagBoolean{
+		FlagBase:  b.FlagBase,
 		Variation: b.variationV,
 	}
 
-	ldFlag := f.ToLdFlag(b.FlagBase)
+	ldFlag := f.ToLdFlag()
 	ldFlag.Version = b.versionV
 	ldFlag.Deleted = b.isDeleted
 

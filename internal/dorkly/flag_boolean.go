@@ -11,15 +11,16 @@ var _ FlagConfigForEnv = &FlagBoolean{}
 
 // FlagBoolean is a boolean flag that is either on (true) or off (false)
 type FlagBoolean struct {
+	FlagBase
 	Variation bool `yaml:"variation"`
 }
 
-func (f *FlagBoolean) Validate(flagBase FlagBase) error {
+func (f *FlagBoolean) Validate() error {
 	return nil
 }
 
-func (f *FlagBoolean) ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag {
-	return flagBase.ldFeatureFlagBoolean(f.Variation)
+func (f *FlagBoolean) ToLdFlag() ldmodel.FeatureFlag {
+	return f.ldFeatureFlagBoolean(f.Variation)
 }
 
 // This ensures that FlagBooleanRollout implements FlagConfigForEnv
@@ -27,10 +28,11 @@ var _ FlagConfigForEnv = &FlagBooleanRollout{}
 
 // FlagBooleanRollout is a boolean flag that is on (true) for a percentage of users based on the id field
 type FlagBooleanRollout struct {
+	FlagBase
 	PercentRollout BooleanRolloutVariation `yaml:"percentRollout"`
 }
 
-func (f *FlagBooleanRollout) Validate(flagBase FlagBase) error {
+func (f *FlagBooleanRollout) Validate() error {
 	if f.PercentRollout.True < 0.0 {
 		return errors.New("percentRollout.true must be >= 0")
 	}
@@ -62,8 +64,8 @@ type BooleanRolloutVariation struct {
 	False float64 `yaml:"false"`
 }
 
-func (f *FlagBooleanRollout) ToLdFlag(flagBase FlagBase) ldmodel.FeatureFlag {
-	ldFlag := flagBase.ldFeatureFlagBoolean(true)
+func (f *FlagBooleanRollout) ToLdFlag() ldmodel.FeatureFlag {
+	ldFlag := f.ldFeatureFlagBoolean(true)
 	ldFlag.Fallthrough = ldmodel.VariationOrRollout{
 		Rollout: ldmodel.Rollout{
 			Kind:        ldmodel.RolloutKindRollout,

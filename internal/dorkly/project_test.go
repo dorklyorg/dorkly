@@ -25,8 +25,26 @@ var (
 					EnableMobileKey: true,
 				},
 				envConfigs: map[string]FlagConfigForEnv{
-					"production": &FlagBoolean{Variation: false},
-					"staging":    &FlagBoolean{Variation: true},
+					"production": &FlagBoolean{
+						FlagBase: FlagBase{
+							key:             "boolean1",
+							Description:     "Human-readable description of the flag.",
+							Type:            "boolean",
+							EnableBrowser:   true,
+							EnableMobileKey: true,
+						},
+						Variation: false,
+					},
+					"staging": &FlagBoolean{
+						FlagBase: FlagBase{
+							key:             "boolean1",
+							Description:     "Human-readable description of the flag.",
+							Type:            "boolean",
+							EnableBrowser:   true,
+							EnableMobileKey: true,
+						},
+						Variation: true,
+					},
 				},
 			},
 			"rollout1": {
@@ -38,8 +56,25 @@ var (
 					EnableMobileKey: true,
 				},
 				envConfigs: map[string]FlagConfigForEnv{
-					"production": &FlagBooleanRollout{PercentRollout: BooleanRolloutVariation{True: 31.0, False: 69.0}},
-					"staging":    &FlagBooleanRollout{PercentRollout: BooleanRolloutVariation{True: 100.0, False: 0.0}},
+					"production": &FlagBooleanRollout{
+						FlagBase: FlagBase{
+							key:             "rollout1",
+							Description:     "Human-readable description of the flag.",
+							Type:            "booleanRollout",
+							EnableBrowser:   true,
+							EnableMobileKey: true,
+						},
+						PercentRollout: BooleanRolloutVariation{True: 31.0, False: 69.0},
+					},
+					"staging": &FlagBooleanRollout{
+						FlagBase: FlagBase{
+							key:             "rollout1",
+							Description:     "Human-readable description of the flag.",
+							Type:            "booleanRollout",
+							EnableBrowser:   true,
+							EnableMobileKey: true,
+						},
+						PercentRollout: BooleanRolloutVariation{True: 100.0, False: 0.0}},
 				},
 			},
 		},

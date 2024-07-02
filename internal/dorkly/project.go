@@ -110,11 +110,11 @@ func (p *Project) loadFlagYamlFile(filePath string) (*Flag, error) {
 	flag.key = getFileNameNoSuffix(f.Name())
 	flag.envConfigs = make(map[string]FlagConfigForEnv)
 	for _, env := range p.environments {
-		flagEnvConfig, err := p.loadFlagConfigForEnvYamlFile(flag, filepath.Join(p.path, "environments", env, flag.key+".yml"))
+		flagEnvConfig, err := p.loadFlagConfigForEnvYamlFile(flag.FlagBase, filepath.Join(p.path, "environments", env, flag.key+".yml"))
 		if err != nil {
 			return nil, err
 		}
-		err = flagEnvConfig.Validate(flag.FlagBase)
+		err = flagEnvConfig.Validate()
 		if err != nil {
 			return nil, err
 		}
@@ -143,7 +143,7 @@ func (p *Project) loadEnvironmentNames() error {
 	return nil
 }
 
-func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (FlagConfigForEnv, error) {
+func (p *Project) loadFlagConfigForEnvYamlFile(flagBase FlagBase, filePath string) (FlagConfigForEnv, error) {
 	logger.Infof("Loading environment-specific flag config from file [%s]", filePath)
 	f, err := os.Open(filePath)
 	if err != nil {
@@ -152,13 +152,14 @@ func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (Flag
 	defer f.Close()
 	dec := yaml.NewDecoder(f)
 
-	switch flag.Type {
+	switch flagBase.Type {
 	case FlagTypeBoolean:
 		envData := &FlagBoolean{}
 		err = dec.Decode(&envData)
 		if err != nil {
 			return nil, err
 		}
+		envData.FlagBase = flagBase
 		return envData, nil
 	case FlagTypeBooleanRollout:
 		envData := &FlagBooleanRollout{}
@@ -166,9 +167,10 @@ func (p *Project) loadFlagConfigForEnvYamlFile(flag Flag, filePath string) (Flag
 		if err != nil {
 			return nil, err
 		}
+		envData.FlagBase = flagBase
 		return envData, nil
 	}
-	return nil, errors.Errorf("unsupported flag type [%s] for flag [%s]", p.Flags[flag.key].Type, flag.key)
+	return nil, errors.Errorf("unsupported flag type: [%s] found in file: [%s]", flagBase.Type, filePath)
 }
 
 // toRelayArchive converts a dorkly Project to a RelayArchive for consumption by ld-relay
@@ -198,7 +200,7 @@ func (p *Project) toRelayArchive() *RelayArchive {
 			},
 		}
 		for _, flag := range p.Flags {
-			envs[env].data.Flags[flag.key] = flag.envConfigs[env].ToLdFlag(flag.FlagBase)
+			envs[env].data.Flags[flag.key] = flag.envConfigs[env].ToLdFlag()
 		}
 	}
 	return &RelayArchive{envs: envs}
