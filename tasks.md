@@ -3,12 +3,15 @@
 - [ ] Terraform: HA setup: multiple Dorkly server instances behind a load balancer all receiving updates.
 - [ ] yaml files validation: warn if flag is defined in the project but not an environment
 - [ ] yaml files validation: error if flag is defined in an environment but not in the project
+- [ ] From Feedback: rename to 'brightly'
+- [ ] From Feedback: Support multivariate string variations
+- [ ] From Feedback: Support multivariate number variations
 
 ### Maybe not required for MVP:
-- [ ] Consider enabling configuring ld-relay client context (aka goals endpoint): https://github.com/launchdarkly/ld-relay/blob/1adf0dde5b11343d3bdf011c86e3f7116c4960fc/internal/relayenv/js_context.go#L7
 - [ ] Terraform: validate variables (see TODOs in https://github.com/dorklyorg/terraform-aws-dorkly-flags/blob/main/variables.tf)
 - [ ] Terraform: Create freeform Github workflow with human input to create flags and perform other tasks ie create flag, create environment, etc.
 - [ ] Use localstack to do end to end testing (if possible)
+- [ ] Investigate: Change yaml parsing logic to read in maps instead of structs to better detect 0 values.
 
 ### Pending DX tasks
 - [ ] temporary files and archives: keep them in memory avoiding weird filesystem bugs/flaky tests.
