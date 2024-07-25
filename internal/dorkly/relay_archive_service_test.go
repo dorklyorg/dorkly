@@ -23,8 +23,8 @@ const (
 func Test_S3RelayArchiveService(t *testing.T) {
 	ctx := context.Background()
 
-	localstackContainer, err := localstack.RunContainer(ctx,
-		testcontainers.WithImage("localstack/localstack:3.4"),
+	localstackContainer, err := localstack.Run(ctx,
+		"localstack/localstack:3.4",
 		testcontainers.WithEnv(map[string]string{"SERVICES": "s3"}),
 	)
 	if err != nil {
