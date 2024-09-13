@@ -11,8 +11,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.30.7
 	github.com/go-errors/errors v1.5.1
 	github.com/launchdarkly/go-sdk-common/v3 v3.1.0
-	github.com/launchdarkly/go-server-sdk-evaluation/v3 v3.0.0
-	github.com/launchdarkly/go-server-sdk/v7 v7.6.1
+	github.com/launchdarkly/go-server-sdk-evaluation/v3 v3.0.1
+	github.com/launchdarkly/go-server-sdk/v7 v7.6.2
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.33.0
 	github.com/testcontainers/testcontainers-go/modules/localstack v0.33.0
@@ -60,12 +60,12 @@ require (
 	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/launchdarkly/ccache v1.1.0 // indirect
 	github.com/launchdarkly/eventsource v1.6.2 // indirect
-	github.com/launchdarkly/go-jsonstream/v3 v3.0.0 // indirect
+	github.com/launchdarkly/go-jsonstream/v3 v3.1.0 // indirect
 	github.com/launchdarkly/go-sdk-events/v3 v3.4.0 // indirect
-	github.com/launchdarkly/go-semver v1.0.2 // indirect
+	github.com/launchdarkly/go-semver v1.0.3 // indirect
 	github.com/lufia/plan9stats v0.0.0-20240226150601-1dcf7310316a // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
-	github.com/mailru/easyjson v0.7.6 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/patternmatcher v0.6.0 // indirect
 	github.com/moby/sys/sequential v0.5.0 // indirect
