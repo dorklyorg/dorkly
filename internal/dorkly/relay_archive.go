@@ -382,7 +382,7 @@ func readTarGz(srcFile string) (map[string][]byte, error) {
 		}
 
 		filename := filepath.Base(header.Name)
-		if filename == "." {
+		if strings.HasPrefix(filename, ".") {
 			continue
 		}
 		var buf bytes.Buffer
