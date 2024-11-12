@@ -1,3 +1,0 @@
-type: booleanRollout
-description: "Human-readable description of the flag."
-serverSideOnly: false
